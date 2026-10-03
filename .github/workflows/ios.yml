@@ -1,0 +1,170 @@
+name: ElnurTTS iOS derleme ve test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ipa:
+        description: "Imzasiz iPhone .ipa dosyasi da uretilsin mi?"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: macos-15
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: En yeni Xcode'u sec
+        run: |
+          ls -d /Applications/Xcode*.app
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -v -i beta | sort -V | tail -1)
+          [ -z "$X" ] && X=$(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)
+          sudo xcode-select -s "$X"
+          xcodebuild -version
+
+      - name: Ses verilerini kontrol et
+        run: |
+          mkdir -p out
+          ls -la ElnurKit/Resources/ElnurData/voices | tee out/model_indirme.log
+          ls ElnurKit/Resources/ElnurData/voices/*/voice.info
+
+      - name: Xcode projesini uret (XcodeGen)
+        run: |
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen generate
+
+      - name: Swift paket onbellegi
+        uses: actions/cache@v4
+        with:
+          path: spm
+          key: spm-${{ hashFiles('project.yml') }}
+
+      - name: Simulator sec
+        run: |
+          xcrun simctl list runtimes
+          SIM=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys, re
+          d = json.load(sys.stdin)['devices']
+          c = []
+          for runtime, devs in d.items():
+              m = re.search(r'iOS-(\d+)-(\d+)', runtime)
+              if not m: continue
+              for x in devs:
+                  if x['name'].startswith('iPhone'):
+                      c.append(((int(m.group(1)), int(m.group(2))), x['name'], x['udid']))
+          c.sort()
+          print(c[-1][2]); print(c[-1], file=sys.stderr)
+          ")
+          echo "SIM=$SIM" >> "$GITHUB_ENV"
+
+      - name: Derle
+        run: |
+          set -o pipefail
+          mkdir -p out
+          xcodebuild build-for-testing \
+            -project ElnurTTS.xcodeproj -scheme ElnurTTS \
+            -destination "id=$SIM" \
+            -clonedSourcePackagesDirPath spm \
+            -derivedDataPath dd \
+            2>&1 | tee out/xcodebuild.log | (command -v xcbeautify >/dev/null && xcbeautify --renderer github-actions || cat)
+
+      - name: Uygulamayi simulatore kur ve bir kez ac
+        run: |
+          xcrun simctl boot "$SIM" || true
+          xcrun simctl bootstatus "$SIM" -b
+          APP=$(ls -d dd/Build/Products/Debug-iphonesimulator/ElnurTTS.app)
+          ls "$APP/PlugIns" "$APP/Frameworks" | tee -a out/kurulum.log
+          xcrun simctl install "$SIM" "$APP"
+          xcrun simctl launch "$SIM" az.elnurtts.app | tee -a out/kurulum.log
+          sleep 20
+          xcrun simctl spawn "$SIM" pluginkit -mAvvv -p com.apple.AudioUnit 2>&1 | grep -i -A3 elnur | tee -a out/kurulum.log || true
+
+      - name: Simulatorde test et
+        run: |
+          set -o pipefail
+          export TEST_RUNNER_ELNUR_OUT="$PWD/out"
+          xcodebuild test-without-building \
+            -project ElnurTTS.xcodeproj -scheme ElnurTTS \
+            -destination "id=$SIM" \
+            -clonedSourcePackagesDirPath spm \
+            -derivedDataPath dd \
+            -resultBundlePath out/TestResults.xcresult \
+            2>&1 | tee -a out/xcodebuild.log | (command -v xcbeautify >/dev/null && xcbeautify --renderer github-actions || cat)
+
+      - name: Test ciktilarini ozetle
+        if: always()
+        run: |
+          grep -hE "IPA \[|SENTEZ |SISTEM |error:|XCTAssert|failed|Test Suite .* (passed|failed)" out/xcodebuild.log | head -100 || true
+          ls -la out || true
+
+      - name: Imzasiz iPhone .ipa uret
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ipa }}
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project ElnurTTS.xcodeproj -scheme ElnurTTS -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -clonedSourcePackagesDirPath spm -derivedDataPath dd-device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tail -30
+          mkdir -p Payload ipa
+          cp -R dd-device/Build/Products/Release-iphoneos/ElnurTTS.app Payload/
+          zip -qry ipa/ElnurTTS-unsigned.ipa Payload
+          ls -la ipa
+
+      - name: Sonuclari 'ci-sonuc' dalina yaz
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p out
+          R=$(mktemp -d)
+          cp out/*.wav out/rapor.txt out/model_indirme.log out/kurulum.log "$R"/ 2>/dev/null || true
+          if [ -f out/xcodebuild.log ]; then
+            grep -nE "error:|warning: .*Elnur|failed|FAILED|MOTOR |HIZ |SENTEZ |SISTEM |Test Case|Test Suite|XCTAssert|fatal" out/xcodebuild.log | head -400 > "$R/onemli_satirlar.txt" || true
+            tail -n 400 out/xcodebuild.log > "$R/log_son_400.txt"
+          fi
+          {
+            echo "Calistirma: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "Commit: ${{ github.sha }}"
+            echo "Tarih: $(date -u)"
+            echo "Xcode: $(xcodebuild -version 2>/dev/null | tr '\n' ' ')"
+            echo "Simulator: ${SIM:-?}"
+            echo "Is durumu: ${{ job.status }}"
+          } > "$R/OZET.txt"
+          ls -la "$R"
+          cd "$R"
+          git init -q -b ci-sonuc
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "CI sonucu ${{ github.run_number }} (${{ job.status }})"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" ci-sonuc
+
+      - name: Ses dosyalarini yukle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ses-ornekleri
+          path: |
+            out/*.wav
+            out/rapor.txt
+            out/xcodebuild.log
+          if-no-files-found: warn
+
+      - name: IPA yukle
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ipa }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ElnurTTS-ipa
+          path: ipa/*.ipa

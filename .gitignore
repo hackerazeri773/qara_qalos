@@ -1,0 +1,10 @@
+*.xcodeproj/
+*.xcworkspace/
+dd/
+dd-device/
+spm/
+out/
+Payload/
+ipa/
+.DS_Store
+.build/

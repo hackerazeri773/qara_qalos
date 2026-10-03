@@ -1,0 +1,86 @@
+[
+ {
+  "voice": "az.elnurtts.elnur",
+  "text": "Salam! Bu gün hava çox gözəldir, elə deyilmi? Saat 14:30-da 3 nəfər gəldi.",
+  "seconds": 5.495,
+  "engineSampleRate": 16000,
+  "rms": 0.09539
+ },
+ {
+  "voice": "az.elnurtts.gulnar",
+  "text": "Salam! Bu gün hava çox gözəldir, elə deyilmi? Saat 14:30-da 3 nəfər gəldi.",
+  "seconds": 6.5,
+  "engineSampleRate": 24000,
+  "rms": 0.09399
+ },
+ {
+  "voice": "az.elnurtts.banu",
+  "text": "Salam! Bu gün hava çox gözəldir, elə deyilmi? Saat 14:30-da 3 nəfər gəldi.",
+  "seconds": 5.46,
+  "engineSampleRate": 24000,
+  "rms": 0.09131
+ },
+ {
+  "voice": "az.elnurtts.babek",
+  "text": "Salam! Bu gün hava çox gözəldir, elə deyilmi? Saat 14:30-da 3 nəfər gəldi.",
+  "seconds": 5.18,
+  "engineSampleRate": 24000,
+  "rms": 0.09976
+ },
+ {
+  "voice": "az.elnurtts.ahmet",
+  "text": "Merhaba! Ayarlar, Erişilebilirlik, VoiceOver. Fiyatı 25,5 TL idi.",
+  "seconds": 5.415,
+  "engineSampleRate": 24000,
+  "rms": 0.08441
+ },
+ {
+  "voice": "az.elnurtts.fahrettin",
+  "text": "Merhaba! Ayarlar, Erişilebilirlik, VoiceOver. Fiyatı 25,5 TL idi.",
+  "seconds": 5.01,
+  "engineSampleRate": 24000,
+  "rms": 0.08826
+ },
+ {
+  "voice": "az.elnurtts.emel",
+  "text": "Merhaba! Ayarlar, Erişilebilirlik, VoiceOver. Fiyatı 25,5 TL idi.",
+  "seconds": 5.07,
+  "engineSampleRate": 24000,
+  "rms": 0.09916
+ },
+ {
+  "voice": "az.elnurtts.faruk",
+  "text": "Merhaba! Ayarlar, Erişilebilirlik, VoiceOver. Fiyatı 25,5 TL idi.",
+  "seconds": 5.79,
+  "engineSampleRate": 16000,
+  "rms": 0.08284
+ },
+ {
+  "voice": "az.elnurtts.filiz_kompak",
+  "text": "Merhaba! Ayarlar, Erişilebilirlik, VoiceOver. Fiyatı 25,5 TL idi.",
+  "seconds": 5.095,
+  "engineSampleRate": 24000,
+  "rms": 0.09161
+ },
+ {
+  "voice": "az.elnurtts.svetlana",
+  "text": "Привет! Сегодня прекрасная погода, не правда ли?",
+  "seconds": 3.165,
+  "engineSampleRate": 24000,
+  "rms": 0.10302
+ },
+ {
+  "voice": "az.elnurtts.dimitry",
+  "text": "Привет! Сегодня прекрасная погода, не правда ли?",
+  "seconds": 3.255,
+  "engineSampleRate": 24000,
+  "rms": 0.08898
+ },
+ {
+  "voice": "az.elnurtts.jenny",
+  "text": "Hello! This is a test of the voice.",
+  "seconds": 1.925,
+  "engineSampleRate": 24000,
+  "rms": 0.08578
+ }
+]

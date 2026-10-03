@@ -1,0 +1,4 @@
+module ElnurTTSEngine {
+    header "ElnurTTS.h"
+    export *
+}

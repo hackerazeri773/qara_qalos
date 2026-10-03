@@ -1,0 +1,101 @@
+{
+  "outputSampleRate": 24000,
+  "voices": [
+    {
+      "id": "az.elnurtts.elnur",
+      "name": "Elnur",
+      "displayName": "Elnur",
+      "language": "az-AZ",
+      "gender": "male",
+      "quality": "min"
+    },
+    {
+      "id": "az.elnurtts.gulnar",
+      "name": "Gulnar",
+      "displayName": "Gulnar",
+      "language": "az-AZ",
+      "gender": "female",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.banu",
+      "name": "Banu",
+      "displayName": "Banu",
+      "language": "az-AZ",
+      "gender": "female",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.babek",
+      "name": "Babek",
+      "displayName": "Babek",
+      "language": "az-AZ",
+      "gender": "male",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.ahmet",
+      "name": "Ahmet",
+      "displayName": "Ahmet",
+      "language": "tr-TR",
+      "gender": "male",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.fahrettin",
+      "name": "Fahrettin",
+      "displayName": "Fahrettin",
+      "language": "tr-TR",
+      "gender": "male",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.emel",
+      "name": "Emel",
+      "displayName": "Emel",
+      "language": "tr-TR",
+      "gender": "female",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.faruk",
+      "name": "Faruk",
+      "displayName": "Faruk",
+      "language": "tr-TR",
+      "gender": "male",
+      "quality": "min"
+    },
+    {
+      "id": "az.elnurtts.filiz_kompak",
+      "name": "Filiz_kompak",
+      "displayName": "Filiz Kompakt",
+      "language": "tr-TR",
+      "gender": "female",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.svetlana",
+      "name": "Svetlana",
+      "displayName": "Svetlana",
+      "language": "ru-RU",
+      "gender": "female",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.dimitry",
+      "name": "Dimitry",
+      "displayName": "Dimitry",
+      "language": "ru-RU",
+      "gender": "male",
+      "quality": "std"
+    },
+    {
+      "id": "az.elnurtts.jenny",
+      "name": "Jenny",
+      "displayName": "Jenny",
+      "language": "en-US",
+      "gender": "female",
+      "quality": "std"
+    }
+  ]
+}
