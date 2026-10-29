@@ -1,0 +1,99 @@
+name: Ses deneyi (Release derlemeleri)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deney-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: macos-15
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: En yeni Xcode'u sec
+        run: |
+          ls -d /Applications/Xcode*.app
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -v -i beta | sort -V | tail -1)
+          [ -z "$X" ] && X=$(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)
+          sudo xcode-select -s "$X"
+          xcodebuild -version
+
+      - name: Ses verilerini kontrol et
+        run: |
+          mkdir -p out
+          ls -la ElnurKit/Resources/ElnurData/voices | tee out/model_indirme.log
+          ls ElnurKit/Resources/ElnurData/voices/*/voice.info
+
+      - name: Xcode projesini uret (XcodeGen)
+        run: |
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen generate
+
+      - name: Swift paket onbellegi
+        uses: actions/cache@v4
+        with:
+          path: spm
+          key: spm-${{ hashFiles('project.yml') }}
+
+      - name: Simulator sec
+        run: |
+          xcrun simctl list runtimes
+          SIM=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys, re
+          d = json.load(sys.stdin)['devices']
+          c = []
+          for runtime, devs in d.items():
+              m = re.search(r'iOS-(\d+)-(\d+)', runtime)
+              if not m: continue
+              for x in devs:
+                  if x['name'].startswith('iPhone'):
+                      c.append(((int(m.group(1)), int(m.group(2))), x['name'], x['udid']))
+          c.sort()
+          print(c[-1][2]); print(c[-1], file=sys.stderr)
+
+      - name: Release derlemeleri ve ses uretimi
+        run: |
+          set -o pipefail
+          mkdir -p out
+          run_variant() {
+            V=$1; shift
+            echo "=== $V: $*" | tee -a out/deney.log
+            xcodebuild build-for-testing \
+              -project ElnurTTS.xcodeproj -scheme ElnurTTS -configuration Release \
+              -destination "id=$SIM" -clonedSourcePackagesDirPath spm -derivedDataPath dd-$V \
+              "$@" > out/build-$V.log 2>&1 || { tail -40 out/build-$V.log | tee -a out/deney.log; return 1; }
+            grep -c "ffp-contract=off" out/build-$V.log | sed "s/^/$V ffp-contract=off sayisi: /" | tee -a out/deney.log || true
+            mkdir -p out/$V
+            TEST_RUNNER_ELNUR_OUT="$PWD/out/$V" xcodebuild test-without-building \
+              -project ElnurTTS.xcodeproj -scheme ElnurTTS -configuration Release \
+              -destination "id=$SIM" -clonedSourcePackagesDirPath spm -derivedDataPath dd-$V \
+              -only-testing:ElnurTests/ElnurTests/test2_SynthesizeAllVoices \
+              "$@" 2>&1 | grep -E "SENTEZ|Test Case|error" | tee -a out/deney.log || true
+          }
+          run_variant release
+          run_variant release-nofma OTHER_CFLAGS='$(inherited) -ffp-contract=off' OTHER_CPLUSPLUSFLAGS='$(inherited) -ffp-contract=off'
+
+      - name: Sonuclari 'ses-deneyi' dalina yaz
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          R=$(mktemp -d)
+          for V in release release-nofma; do
+            mkdir -p "$R/$V"; cp out/$V/*.wav out/$V/rapor.txt "$R/$V/" 2>/dev/null || true
+          done
+          cp out/deney.log "$R/" 2>/dev/null || true
+          cd "$R"
+          git init -q -b ses-deneyi
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Ses deneyi ${{ github.run_number }}"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" ses-deneyi
