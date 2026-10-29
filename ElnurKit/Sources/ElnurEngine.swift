@@ -12,6 +12,11 @@ public final class ElnurEngine {
     private var engines: [String: ElnurTTS_tts_engine] = [:]
     private let lock = NSLock()
 
+    /// Son sentezin tani bilgileri (tepe degeri, sinirlayiciya takilan ornek sayisi).
+    public private(set) var lastPeak: Float = 0
+    public private(set) var lastLimitedSamples = 0
+    public private(set) var lastEngineSampleRate = 0
+
     private static let sharedLock = NSLock()
     private static var sharedInstance: ElnurEngine?
 
@@ -164,6 +169,9 @@ public final class ElnurEngine {
         withExtendedLifetime(sink) {}
         if !ok { throw ElnurError.synthesisFailed("mesaj olusturulamadi") }
         sink.flush()
+        lastPeak = sink.peak
+        lastLimitedSamples = sink.limitedSamples
+        lastEngineSampleRate = sink.sampleRate
         return sink.samples
     }
 }
@@ -177,6 +185,20 @@ final class SynthesisSink {
     private(set) var samples: [Float] = []
     private var resampler = LinearResampler()
     private var pending: [Float] = []
+    private(set) var peak: Float = 0
+    private(set) var limitedSamples = 0
+
+    /// Yumusak sinirlayici: 0.9'un ustundeki tepe degerlerini sert kirpmak yerine
+    /// yumusakca 1'e yaklastirir.
+    @inline(__always)
+    private func limit(_ x: Float) -> Float {
+        let a = abs(x)
+        if a > peak { peak = a }
+        guard a > 0.9 else { return x }
+        limitedSamples += 1
+        let y = 0.9 + 0.1 * tanh((a - 0.9) / 0.1)
+        return x < 0 ? -y : y
+    }
 
     init(outputRate: Int, onChunk: (([Float]) -> Void)?, shouldContinue: (() -> Bool)?) {
         self.outputRate = outputRate
@@ -186,7 +208,7 @@ final class SynthesisSink {
 
     func receive(_ data: UnsafePointer<Int16>, count: Int) -> Bool {
         var input = [Float](repeating: 0, count: count)
-        for i in 0..<count { input[i] = Float(data[i]) / 32768 }
+        for i in 0..<count { input[i] = limit(Float(data[i]) / 32768) }
         let converted = (sampleRate == 0 || sampleRate == outputRate)
             ? input
             : resampler.process(input, from: sampleRate, to: outputRate)

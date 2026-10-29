@@ -22,11 +22,16 @@ public enum VoiceOverMapping {
         #endif
     }
 
+    /// VoiceOver'in perde degeri motora uygulanmaz: HTS/MAGE vokoderinde perde
+    /// degisikligi surtunmeli seslerde ("s", "ş") bozulmaya yol aciyor.
+    /// (RHVoiceUkraine projesi de ayni karari vermis.)
     public static func pitchMultiplier(for request: SpeechRequestText) -> Double {
-        min(2, max(0.5, request.pitch))
+        1.0
     }
 
+    /// Ses seviyesi hicbir zaman 1'in ustune cikarilmaz; yukseltmeyi VoiceOver yapar.
+    /// Motorun kendi seviyesini asmak kirpilmaya (cizirtiya) yol acar.
     public static func volumeMultiplier(for request: SpeechRequestText) -> Double {
-        min(2, max(0, request.volume))
+        min(1, max(0.05, request.volume))
     }
 }

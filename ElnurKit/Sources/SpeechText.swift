@@ -44,6 +44,10 @@ public struct SpeechRequestText {
     static func multiplier(_ raw: String, named: [String: Double]) -> Double? {
         let value = raw.trimmingCharacters(in: .whitespaces).lowercased()
         if let n = named[value] { return n }
+        // "-3.0dB", "+6dB" -> dogrusal carpan (iOS VoiceOver ses seviyesini boyle gonderir)
+        if value.hasSuffix("db"), let db = Double(value.dropLast(2)) {
+            return pow(10, db / 20)
+        }
         if value.hasSuffix("%"), let number = Double(value.dropLast()) {
             if value.hasPrefix("+") || value.hasPrefix("-") { return max(0.1, 1.0 + number / 100.0) }
             return max(0.1, number / 100.0)

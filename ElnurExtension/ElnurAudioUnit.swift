@@ -61,19 +61,38 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         Self.log.info("SSML rate=\(request.rawRate ?? "-", privacy: .public) pitch=\(request.rawPitch ?? "-", privacy: .public) volume=\(request.rawVolume ?? "-", privacy: .public) -> x\(rate, privacy: .public)")
         DiagnosticsLog.record(ssml: ssml, rate: rate, pitch: pitch, volume: volume)
 
+        // Tani modu: metinde "elnurtts tani" geciyorsa son isteklerin degerlerini seslendir.
+        let lowered = request.text.lowercased()
+        let isDiagnostic = lowered.contains("elnurtts tanı") || lowered.contains("elnurtts tani")
+        let text: String
+        if isDiagnostic {
+            text = RequestHistory.shared.spokenSummary()
+        } else {
+            text = request.text
+        }
+
         let stream = self.stream
         workQueue.async {
+            var peak: Float = 0
+            var limited = 0
             do {
                 let engine = try ElnurEngine.shared()
-                for sentence in TextSplitter.sentences(request.text) {
+                for sentence in TextSplitter.sentences(text) {
                     guard stream.isCurrent(token) else { return }
                     _ = try engine.synthesize(text: sentence, voiceID: voiceID,
                                               rate: rate, pitch: pitch, volume: volume,
                                               onChunk: { chunk in stream.append(chunk, token: token) },
                                               shouldContinue: { stream.isCurrent(token) })
+                    peak = max(peak, engine.lastPeak)
+                    limited += engine.lastLimitedSamples
                 }
             } catch {
                 Self.log.error("Sentez hatasi: \(error.localizedDescription, privacy: .public)")
+            }
+            if !isDiagnostic {
+                RequestHistory.shared.add(rawRate: request.rawRate, rawPitch: request.rawPitch,
+                                          rawVolume: request.rawVolume, rate: rate, volume: volume,
+                                          peak: peak, limited: limited)
             }
             stream.finish(token: token)
         }
@@ -184,5 +203,62 @@ final class SampleStream {
             readIndex = 0
         }
         return finished && readIndex >= samples.count
+    }
+}
+
+/// Eklentinin aldigi son isteklerin degerleri (tani icin, yalnizca bellekte).
+final class RequestHistory {
+    static let shared = RequestHistory()
+
+    struct Entry {
+        let rawRate: String?
+        let rawPitch: String?
+        let rawVolume: String?
+        let rate: Double
+        let volume: Double
+        let peak: Float
+        let limited: Int
+    }
+
+    private let lock = NSLock()
+    private var entries: [Entry] = []
+
+    func add(rawRate: String?, rawPitch: String?, rawVolume: String?,
+             rate: Double, volume: Double, peak: Float, limited: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        entries.append(Entry(rawRate: rawRate, rawPitch: rawPitch, rawVolume: rawVolume,
+                             rate: rate, volume: volume, peak: peak, limited: limited))
+        if entries.count > 20 { entries.removeFirst(entries.count - 20) }
+    }
+
+    /// Sayilari motorun rahat okuyacagi bicimde yazar: "42.5%" -> "42 virgül 5 yüzde".
+    private static func speakable(_ raw: String?) -> String {
+        guard let raw, !raw.isEmpty else { return "yok" }
+        var t = raw
+        t = t.replacingOccurrences(of: "%", with: " yüzde")
+        t = t.replacingOccurrences(of: "dB", with: " desibel")
+        t = t.replacingOccurrences(of: "+", with: "artı ")
+        t = t.replacingOccurrences(of: "-", with: "eksi ")
+        t = t.replacingOccurrences(of: ".", with: " virgül ")
+        return t
+    }
+
+    private static func number(_ x: Double) -> String {
+        String(format: "%.2f", x).replacingOccurrences(of: ".", with: " virgül ")
+    }
+
+    func spokenSummary() -> String {
+        lock.lock()
+        let recent = entries.suffix(3)
+        let total = entries.count
+        let limitedTotal = entries.reduce(0) { $0 + $1.limited }
+        lock.unlock()
+        guard !recent.isEmpty else { return "ElnurTTS tanı. Henüz kayıtlı istek yok." }
+        var parts = ["ElnurTTS tanı. Son \(total) istekte sınırlayıcıya takılan örnek sayısı \(limitedTotal)."]
+        for (i, e) in recent.reversed().enumerated() {
+            parts.append("İstek \(i + 1). Hız \(Self.speakable(e.rawRate)). Ses \(Self.speakable(e.rawVolume)). Perde \(Self.speakable(e.rawPitch)). Motor hızı \(Self.number(e.rate)). Motor sesi \(Self.number(e.volume)). Tepe \(Self.number(Double(e.peak))). Sınırlanan \(e.limited).")
+        }
+        return parts.joined(separator: " ")
     }
 }
