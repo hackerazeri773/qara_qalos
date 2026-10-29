@@ -1,4 +1,5 @@
 import Foundation
+import AVFoundation
 import ElnurTTSEngine
 
 /// ElnurTTS C motorunun Swift sarmalayicisi.
@@ -183,7 +184,7 @@ final class SynthesisSink {
     private let onChunk: (([Float]) -> Void)?
     private let shouldContinue: (() -> Bool)?
     private(set) var samples: [Float] = []
-    private var resampler = LinearResampler()
+    private var resampler: HighQualityResampler?
     private var pending: [Float] = []
     private(set) var peak: Float = 0
     private(set) var limitedSamples = 0
@@ -206,12 +207,15 @@ final class SynthesisSink {
         self.shouldContinue = shouldContinue
     }
 
-    func receive(_ data: UnsafePointer<Int16>, count: Int) -> Bool {
-        var input = [Float](repeating: 0, count: count)
-        for i in 0..<count { input[i] = limit(Float(data[i]) / 32768) }
-        let converted = (sampleRate == 0 || sampleRate == outputRate)
-            ? input
-            : resampler.process(input, from: sampleRate, to: outputRate)
+    private func convert(_ input: [Float], final: Bool) -> [Float] {
+        guard sampleRate > 0, sampleRate != outputRate else { return input }
+        if resampler == nil {
+            resampler = HighQualityResampler(from: Double(sampleRate), to: Double(outputRate))
+        }
+        return resampler?.process(input, final: final) ?? input
+    }
+
+    private func emit(_ converted: [Float]) {
         if onChunk != nil {
             pending.append(contentsOf: converted)
             // Kucuk parcalari biriktirip ~50 ms'lik bloklar halinde gonder.
@@ -222,10 +226,19 @@ final class SynthesisSink {
         } else {
             samples.append(contentsOf: converted)
         }
+    }
+
+    func receive(_ data: UnsafePointer<Int16>, count: Int) -> Bool {
+        var input = [Float](repeating: 0, count: count)
+        for i in 0..<count { input[i] = limit(Float(data[i]) / 32768) }
+        emit(convert(input, final: false))
         return shouldContinue?() ?? true
     }
 
     func flush() {
+        if resampler != nil {
+            emit(convert([], final: true))
+        }
         if !pending.isEmpty {
             onChunk?(pending)
             pending.removeAll()
@@ -233,28 +246,63 @@ final class SynthesisSink {
     }
 }
 
-/// Basit dogrusal ornekleme hizi donusturucu (16 kHz -> 24 kHz konusma icin yeterli).
-struct LinearResampler {
-    private var last: Float = 0
-    private var position: Double = 0  // bir onceki bloga gore kesirli konum
+/// Apple'in en yuksek kaliteli ornekleme hizi donusturucusu (AVAudioConverter,
+/// "mastering" algoritmasi). Parca parca gelen sesi durumunu koruyarak cevirir.
+final class HighQualityResampler {
+    private let converter: AVAudioConverter
+    private let inFormat: AVAudioFormat
+    private let outFormat: AVAudioFormat
+    private let ratio: Double
+    private var finished = false
 
-    mutating func process(_ input: [Float], from inRate: Int, to outRate: Int) -> [Float] {
-        if input.isEmpty { return [] }
-        let step = Double(inRate) / Double(outRate)
-        var output: [Float] = []
-        output.reserveCapacity(Int(Double(input.count) / step) + 2)
-        // Konum -1 = onceki blogun son ornegi
-        var pos = position
-        while pos < Double(input.count - 1) {
-            let i = Int(floor(pos))
-            let frac = Float(pos - Double(i))
-            let a = i < 0 ? last : input[i]
-            let b = input[i + 1]
-            output.append(a + (b - a) * frac)
-            pos += step
+    init?(from inRate: Double, to outRate: Double) {
+        guard let i = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: inRate, channels: 1, interleaved: false),
+              let o = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: outRate, channels: 1, interleaved: false),
+              let c = AVAudioConverter(from: i, to: o) else { return nil }
+        c.sampleRateConverterAlgorithm = AVSampleRateConverterAlgorithm_Mastering
+        c.sampleRateConverterQuality = AVAudioQuality.max.rawValue
+        inFormat = i
+        outFormat = o
+        converter = c
+        ratio = outRate / inRate
+    }
+
+    func process(_ input: [Float], final: Bool) -> [Float] {
+        if finished { return [] }
+        var inputBuffer: AVAudioPCMBuffer?
+        if !input.isEmpty, let b = AVAudioPCMBuffer(pcmFormat: inFormat, frameCapacity: AVAudioFrameCount(input.count)) {
+            b.frameLength = AVAudioFrameCount(input.count)
+            input.withUnsafeBufferPointer { b.floatChannelData![0].update(from: $0.baseAddress!, count: input.count) }
+            inputBuffer = b
         }
-        position = pos - Double(input.count)
-        last = input[input.count - 1]
+        var supplied = false
+        var output: [Float] = []
+        let capacity = AVAudioFrameCount(Double(max(input.count, 256)) * ratio) + 1024
+        while true {
+            guard let out = AVAudioPCMBuffer(pcmFormat: outFormat, frameCapacity: capacity) else { break }
+            var error: NSError?
+            let status = converter.convert(to: out, error: &error) { _, outStatus in
+                if !supplied, let inputBuffer {
+                    supplied = true
+                    outStatus.pointee = .haveData
+                    return inputBuffer
+                }
+                outStatus.pointee = final ? .endOfStream : .noDataNow
+                return nil
+            }
+            if out.frameLength > 0 {
+                output.append(contentsOf: UnsafeBufferPointer(start: out.floatChannelData![0], count: Int(out.frameLength)))
+            }
+            switch status {
+            case .haveData:
+                continue
+            case .endOfStream:
+                finished = true
+                return output
+            default:
+                return output
+            }
+        }
         return output
     }
 }

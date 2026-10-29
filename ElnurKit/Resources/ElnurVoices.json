@@ -1,5 +1,5 @@
 {
-  "outputSampleRate": 24000,
+  "outputSampleRate": 48000,
   "voices": [
     {
       "id": "az.elnurtts.elnur",
