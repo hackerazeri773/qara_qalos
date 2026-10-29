@@ -57,6 +57,8 @@ jobs:
                       c.append(((int(m.group(1)), int(m.group(2))), x['name'], x['udid']))
           c.sort()
           print(c[-1][2]); print(c[-1], file=sys.stderr)
+          ")
+          echo "SIM=$SIM" >> "$GITHUB_ENV"
 
       - name: Release derlemeleri ve ses uretimi
         run: |
