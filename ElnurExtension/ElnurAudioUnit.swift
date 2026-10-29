@@ -182,8 +182,10 @@ final class SampleStream {
         condition.lock()
         defer { condition.unlock() }
 
-        let deadline = Date().addingTimeInterval(3.0)
-        while readIndex >= samples.count && !finished {
+        // Istenen blogun tamami hazir olana kadar bekle. Yarim blogu sessizlikle
+        // doldurmak konusmanin icine kisa bosluklar sokar ("takilarak konusma").
+        let deadline = Date().addingTimeInterval(2.0)
+        while samples.count - readIndex < count && !finished {
             if !condition.wait(until: deadline) { break }
         }
 
