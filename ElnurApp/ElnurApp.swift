@@ -2,8 +2,21 @@ import SwiftUI
 import AVFoundation
 import ElnurKit
 
+/// VoiceOver'in uygulama icinde de kullanicinin normal sesini kullanmasi icin
+/// uygulamanin erisilebilirlik dilini telefonun diline esitler. Bu ayar olmadan
+/// iOS uygulamayi Ingilizce sayar ve metinleri Ingilizce sesle okur.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        application.accessibilityLanguage = Locale.preferredLanguages.first ?? "tr-TR"
+        return true
+    }
+}
+
 @main
 struct ElnurApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     init() {
         // Sisteme seslerimizin var oldugunu bildir (VoiceOver listesinde gorunmeleri icin).
         AVSpeechSynthesisProviderVoice.updateSpeechVoices()
@@ -26,7 +39,7 @@ struct ContentView: View {
     @State private var busy = false
     @State private var ssmlLog = ""
     @StateObject private var player = SamplePlayer()
-    private let systemSynth = AVSpeechSynthesizer()
+    @StateObject private var probe = SystemVoiceProbe()
 
     var body: some View {
         NavigationStack {
@@ -79,6 +92,14 @@ struct ContentView: View {
                 Section("VoiceOver'da kullanmak") {
                     Text("Ayarlar → Erişilebilirlik → VoiceOver → Konuşma → Ses bölümünden ElnurTTS seslerinden birini seçin. Sesler görünmüyorsa bu uygulamayı bir kez açıp birkaç saniye bekleyin.")
                         .font(.footnote)
+                }
+                Section("Sistem tanısı") {
+                    Button("Sistemin gördüğü ElnurTTS seslerini listele") { probe.listVoices() }
+                    Button("Sistem sesiyle dosyaya yazma testi") { probe.writeTest(voiceID: selectedID, text: text) }
+                    if !probe.report.isEmpty {
+                        Text(probe.report).font(.caption).textSelection(.enabled)
+                        ShareLink(item: probe.report) { Text("Tanı raporunu paylaş") }
+                    }
                 }
                 Section("VoiceOver tanı kaydı") {
                     Button("Son SSML isteklerini göster") { ssmlLog = DiagnosticsLog.read() }
@@ -138,14 +159,99 @@ struct ContentView: View {
     }
 
     private func speakWithSystem() {
-        guard let voice = AVSpeechSynthesisVoice(identifier: selectedID) else {
-            status = "Sistem bu sesi henüz görmüyor. 'Sesleri sisteme yeniden bildir'e basıp biraz bekleyin."
+        status = probe.speak(voiceID: selectedID, text: text)
+    }
+}
+
+/// Sistem (AVSpeechSynthesizer) uzerinden eklentimizi deneyen ve ne oldugunu raporlayan yardimci.
+final class SystemVoiceProbe: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
+    @Published var report = ""
+    private let synth = AVSpeechSynthesizer()
+    private let writer = AVSpeechSynthesizer()
+    private var started = false
+
+    override init() {
+        super.init()
+        synth.delegate = self
+    }
+
+    private func log(_ line: String) {
+        DispatchQueue.main.async {
+            let time = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+            self.report += "[\(time)] \(line)\n"
+        }
+    }
+
+    func listVoices() {
+        let all = AVSpeechSynthesisVoice.speechVoices()
+        let ours = all.filter { $0.identifier.hasPrefix("az.elnurtts") }
+        log("Sistemde toplam \(all.count) ses var, ElnurTTS: \(ours.count)")
+        for v in ours {
+            log("  \(v.name) | \(v.language) | \(v.identifier)")
+        }
+        let langs = Set(all.map(\.language)).sorted()
+        log("Sistem dilleri: \(langs.joined(separator: ", "))")
+    }
+
+    /// Donus: ekranda gosterilecek durum metni.
+    func speak(voiceID: String, text: String) -> String {
+        guard let voice = AVSpeechSynthesisVoice(identifier: voiceID) else {
+            log("speak: sistem '\(voiceID)' sesini bulamadi")
+            return "Sistem bu sesi bulamadı. 'Sesleri sisteme yeniden bildir'e basıp 30 sn bekleyin."
+        }
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = voice
+        started = false
+        log("speak: \(voice.name) [\(voice.language)] istendi")
+        synth.stopSpeaking(at: .immediate)
+        synth.speak(utterance)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+            guard let self else { return }
+            if !self.started { self.log("speak: 5 sn icinde konusma BASLAMADI") }
+        }
+        return "Sistem sesi istendi: \(voice.name). Sonuç 'Sistem tanısı' bölümünde."
+    }
+
+    /// Eklentinin ses uretip uretmedigini, hoparlore gondermeden olcer.
+    func writeTest(voiceID: String, text: String) {
+        guard let voice = AVSpeechSynthesisVoice(identifier: voiceID) else {
+            log("write: sistem '\(voiceID)' sesini bulamadi")
             return
         }
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = voice
-        systemSynth.speak(utterance)
-        status = "Sistem sesi: \(voice.name)"
+        var frames = 0
+        var buffers = 0
+        var rate = 0.0
+        let start = Date()
+        log("write: \(voice.name) basladi")
+        writer.write(utterance) { [weak self] buffer in
+            guard let pcm = buffer as? AVAudioPCMBuffer else { return }
+            if pcm.frameLength == 0 {
+                let secs = rate > 0 ? Double(frames) / rate : 0
+                self?.log(String(format: "write: bitti, %d parca, %d ornek (%.2f sn ses), %.2f sn surdu", buffers, frames, secs, Date().timeIntervalSince(start)))
+                return
+            }
+            buffers += 1
+            frames += Int(pcm.frameLength)
+            rate = pcm.format.sampleRate
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak self] in
+            if buffers == 0 { self?.log("write: 8 sn icinde hic ses gelmedi") }
+        }
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        started = true
+        log("speak: konusma basladi")
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        log("speak: konusma bitti")
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        log("speak: konusma iptal edildi")
     }
 }
 
