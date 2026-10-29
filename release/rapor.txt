@@ -1,0 +1,12 @@
+Elnur | 5.49 sn ses (ref 5.50) | rms 0.0947 (ref 0.0954) | 0.18 sn islem
+Gulnar | 6.50 sn ses (ref 6.50) | rms 0.0940 (ref 0.0940) | 0.22 sn islem
+Banu | 5.46 sn ses (ref 5.46) | rms 0.0913 (ref 0.0913) | 0.23 sn islem
+Babek | 5.18 sn ses (ref 5.18) | rms 0.0998 (ref 0.0998) | 0.26 sn islem
+Ahmet | 5.42 sn ses (ref 5.42) | rms 0.0844 (ref 0.0844) | 0.29 sn islem
+Fahrettin | 5.01 sn ses (ref 5.01) | rms 0.0883 (ref 0.0883) | 0.19 sn islem
+Emel | 5.07 sn ses (ref 5.07) | rms 0.0992 (ref 0.0992) | 0.18 sn islem
+Faruk | 5.79 sn ses (ref 5.79) | rms 0.0826 (ref 0.0828) | 0.30 sn islem
+Filiz_kompak | 5.09 sn ses (ref 5.09) | rms 0.0916 (ref 0.0916) | 0.25 sn islem
+Svetlana | 3.17 sn ses (ref 3.17) | rms 0.1030 (ref 0.1030) | 0.26 sn islem
+Dimitry | 3.25 sn ses (ref 3.25) | rms 0.0890 (ref 0.0890) | 0.19 sn islem
+Jenny | 1.93 sn ses (ref 1.93) | rms 0.0858 (ref 0.0858) | 0.15 sn islem

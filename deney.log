@@ -1,0 +1,32 @@
+=== release: 
+release ffp-contract=off sayisi: 0
+Test Case '-[ElnurTests.ElnurTests test2_SynthesizeAllVoices]' started.
+SENTEZ Elnur | 5.49 sn ses (ref 5.50) | rms 0.0947 (ref 0.0954) | 0.18 sn islem
+SENTEZ Gulnar | 6.50 sn ses (ref 6.50) | rms 0.0940 (ref 0.0940) | 0.22 sn islem
+SENTEZ Banu | 5.46 sn ses (ref 5.46) | rms 0.0913 (ref 0.0913) | 0.23 sn islem
+SENTEZ Babek | 5.18 sn ses (ref 5.18) | rms 0.0998 (ref 0.0998) | 0.26 sn islem
+SENTEZ Ahmet | 5.42 sn ses (ref 5.42) | rms 0.0844 (ref 0.0844) | 0.29 sn islem
+SENTEZ Fahrettin | 5.01 sn ses (ref 5.01) | rms 0.0883 (ref 0.0883) | 0.19 sn islem
+SENTEZ Emel | 5.07 sn ses (ref 5.07) | rms 0.0992 (ref 0.0992) | 0.18 sn islem
+SENTEZ Faruk | 5.79 sn ses (ref 5.79) | rms 0.0826 (ref 0.0828) | 0.30 sn islem
+SENTEZ Filiz_kompak | 5.09 sn ses (ref 5.09) | rms 0.0916 (ref 0.0916) | 0.25 sn islem
+SENTEZ Svetlana | 3.17 sn ses (ref 3.17) | rms 0.1030 (ref 0.1030) | 0.26 sn islem
+SENTEZ Dimitry | 3.25 sn ses (ref 3.25) | rms 0.0890 (ref 0.0890) | 0.19 sn islem
+SENTEZ Jenny | 1.93 sn ses (ref 1.93) | rms 0.0858 (ref 0.0858) | 0.15 sn islem
+Test Case '-[ElnurTests.ElnurTests test2_SynthesizeAllVoices]' passed (2.753 seconds).
+=== release-nofma: OTHER_CFLAGS=$(inherited) -ffp-contract=off OTHER_CPLUSPLUSFLAGS=$(inherited) -ffp-contract=off
+release-nofma ffp-contract=off sayisi: 9
+Test Case '-[ElnurTests.ElnurTests test2_SynthesizeAllVoices]' started.
+SENTEZ Elnur | 5.49 sn ses (ref 5.50) | rms 0.0947 (ref 0.0954) | 0.14 sn islem
+SENTEZ Gulnar | 6.50 sn ses (ref 6.50) | rms 0.0940 (ref 0.0940) | 0.19 sn islem
+SENTEZ Banu | 5.46 sn ses (ref 5.46) | rms 0.0913 (ref 0.0913) | 0.21 sn islem
+SENTEZ Babek | 5.18 sn ses (ref 5.18) | rms 0.0998 (ref 0.0998) | 0.23 sn islem
+SENTEZ Ahmet | 5.42 sn ses (ref 5.42) | rms 0.0844 (ref 0.0844) | 0.23 sn islem
+SENTEZ Fahrettin | 5.01 sn ses (ref 5.01) | rms 0.0883 (ref 0.0883) | 0.16 sn islem
+SENTEZ Emel | 5.07 sn ses (ref 5.07) | rms 0.0992 (ref 0.0992) | 0.17 sn islem
+SENTEZ Faruk | 5.79 sn ses (ref 5.79) | rms 0.0826 (ref 0.0828) | 0.14 sn islem
+SENTEZ Filiz_kompak | 5.09 sn ses (ref 5.09) | rms 0.0916 (ref 0.0916) | 0.18 sn islem
+SENTEZ Svetlana | 3.17 sn ses (ref 3.17) | rms 0.1030 (ref 0.1030) | 0.21 sn islem
+SENTEZ Dimitry | 3.25 sn ses (ref 3.25) | rms 0.0890 (ref 0.0890) | 0.16 sn islem
+SENTEZ Jenny | 1.93 sn ses (ref 1.93) | rms 0.0858 (ref 0.0858) | 0.10 sn islem
+Test Case '-[ElnurTests.ElnurTests test2_SynthesizeAllVoices]' passed (2.172 seconds).
