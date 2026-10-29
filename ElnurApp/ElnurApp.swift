@@ -182,9 +182,24 @@ final class SystemVoiceProbe: NSObject, ObservableObject, AVSpeechSynthesizerDel
         }
     }
 
+    /// iOS ucuncu taraf seslere kendi on ekini ekleyebiliyor; bu yuzden kimligin
+    /// bir parcasina ya da ses adina gore aranir.
+    static func systemVoice(for voiceID: String) -> AVSpeechSynthesisVoice? {
+        if let exact = AVSpeechSynthesisVoice(identifier: voiceID) { return exact }
+        let all = AVSpeechSynthesisVoice.speechVoices()
+        if let partial = all.first(where: { $0.identifier.contains(voiceID) }) { return partial }
+        let info = (try? ElnurVoiceCatalog.load())?.voice(id: voiceID)
+        return all.first(where: { $0.name == info?.displayName && $0.language == info?.language })
+    }
+
+    static func isOurs(_ v: AVSpeechSynthesisVoice) -> Bool {
+        let names = Set(((try? ElnurVoiceCatalog.load())?.voices ?? []).map(\.displayName))
+        return v.identifier.lowercased().contains("elnurtts") || names.contains(v.name)
+    }
+
     func listVoices() {
         let all = AVSpeechSynthesisVoice.speechVoices()
-        let ours = all.filter { $0.identifier.hasPrefix("az.elnurtts") }
+        let ours = all.filter { Self.isOurs($0) }
         log("Sistemde toplam \(all.count) ses var, ElnurTTS: \(ours.count)")
         for v in ours {
             log("  \(v.name) | \(v.language) | \(v.identifier)")
@@ -195,14 +210,14 @@ final class SystemVoiceProbe: NSObject, ObservableObject, AVSpeechSynthesizerDel
 
     /// Donus: ekranda gosterilecek durum metni.
     func speak(voiceID: String, text: String) -> String {
-        guard let voice = AVSpeechSynthesisVoice(identifier: voiceID) else {
+        guard let voice = Self.systemVoice(for: voiceID) else {
             log("speak: sistem '\(voiceID)' sesini bulamadi")
             return "Sistem bu sesi bulamadı. 'Sesleri sisteme yeniden bildir'e basıp 30 sn bekleyin."
         }
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = voice
         started = false
-        log("speak: \(voice.name) [\(voice.language)] istendi")
+        log("speak: \(voice.name) [\(voice.language)] \(voice.identifier) istendi")
         synth.stopSpeaking(at: .immediate)
         synth.speak(utterance)
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
@@ -214,7 +229,7 @@ final class SystemVoiceProbe: NSObject, ObservableObject, AVSpeechSynthesizerDel
 
     /// Eklentinin ses uretip uretmedigini, hoparlore gondermeden olcer.
     func writeTest(voiceID: String, text: String) {
-        guard let voice = AVSpeechSynthesisVoice(identifier: voiceID) else {
+        guard let voice = Self.systemVoice(for: voiceID) else {
             log("write: sistem '\(voiceID)' sesini bulamadi")
             return
         }
@@ -235,6 +250,9 @@ final class SystemVoiceProbe: NSObject, ObservableObject, AVSpeechSynthesizerDel
             buffers += 1
             frames += Int(pcm.frameLength)
             rate = pcm.format.sampleRate
+            if buffers == 1 {
+                self?.log("write: bicim \(pcm.format)")
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak self] in
             if buffers == 0 { self?.log("write: 8 sn icinde hic ses gelmedi") }
