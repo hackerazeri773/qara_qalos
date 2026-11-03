@@ -65,6 +65,28 @@ public enum SpeechPlanner {
         symbolNames[String(language.prefix(2))]?[c]
     }
 
+    /// Düz metin içinde motorların okumadığı para birimi vb. semboller.
+    static let inlineSymbols: Set<Character> = ["₼", "$", "€", "£", "₽", "₺", "№"]
+
+    /// "$100" -> "100 dollar", "25 ₼" -> "25 manat", "№5" -> "nömrə 5".
+    public static func expandInlineSymbols(_ text: String, language: String) -> String {
+        guard text.contains(where: { inlineSymbols.contains($0) }) else { return text }
+        var result = text
+        for symbol in inlineSymbols {
+            guard result.contains(symbol), let name = symbolName(symbol, language: language) else { continue }
+            let s = NSRegularExpression.escapedPattern(for: String(symbol))
+            if symbol != "№" {
+                // Sembol sayidan once yazilmissa sayidan sonra okunur.
+                if let re = try? NSRegularExpression(pattern: s + #"\s?(\d[\d.,]*\d|\d)"#) {
+                    result = re.stringByReplacingMatches(in: result, range: NSRange(result.startIndex..., in: result),
+                                                         withTemplate: "$1 " + NSRegularExpression.escapedTemplate(for: name))
+                }
+            }
+            result = result.replacingOccurrences(of: String(symbol), with: " \(name) ")
+        }
+        return result.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
+    }
+
     /// - Parameters:
     ///   - language: sesin dili (ör. "az-AZ").
     ///   - engineCharacterMode: motorun kendi karakter modu var mı (ElnurTTS: evet).
@@ -92,7 +114,8 @@ public enum SpeechPlanner {
 
         for segment in segments {
             if !segment.isCharacters {
-                let t = segment.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                let t = expandInlineSymbols(segment.text, language: language)
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
                 if !t.isEmpty { add(t, characterMode: false) }
                 continue
             }
