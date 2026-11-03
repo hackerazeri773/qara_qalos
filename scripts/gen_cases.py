@@ -24,12 +24,16 @@ for lang in cases:
         words = ["Salam 👋 necəsən? 😊", "Əlinizə sağlıq! ❤️", "Şəhərə gəldik, çox gözəl idi.", "Ölkəmiz, üzüm, ğ hərfi, ıslaq", "İstanbul və Bakı",
                  "WhatsApp, YouTube, Google, iPhone", "e-poçt: test@mail.az", "https://www.google.com", "Привет, как дела?", "Hello, how are you?",
                  "BMT, AZN, USB, VoiceOver", "1-ci, 2-ci, 3-cü sinif", "25 AZN, 25 ₼, $100, €50", "Faiz: 50%, temperatur −5 °C",
-                 "Tarix: 05.11.2026, saat 14:30", "Telefon: +994 50 123 45 67"]
+                 "Tarix: 05.11.2026, saat 14:30", "Telefon: +994 50 123 45 67",
+                 "2026-cı il, 5-ci mərtəbə, 20-si, 100-dən çox", "1 200 000 manat, 3,5 kq, 12 km", "Bu gün 😂😂 çox güldük 👍🏽 sağ ol 🙏",
+                 "Qiymət 2+2=4, a<b, x×y, 10÷2, ±3, ∞, →", "© 2026 ElnurTTS™, Bakı ®", "№5, § 3, • maddə, 1‰"]
     else:
         words = ["Merhaba 👋 nasılsın? 😊", "Ellerinize sağlık! ❤️", "Şehre geldik, çok güzeldi.", "Ülkemiz, üzüm, ğ harfi, ıslak", "İstanbul ve Iğdır",
                  "WhatsApp, YouTube, Google, iPhone", "e-posta: test@mail.com.tr", "https://www.google.com", "Привет, как дела?", "Hello, how are you?",
                  "TBMM, TL, USB, VoiceOver", "1., 2. ve 3. sınıf", "25 TL, 25 ₺, $100, €50", "Yüzde: %50, sıcaklık −5 °C",
-                 "Tarih: 05.11.2026, saat 14:30", "Telefon: +90 532 123 45 67"]
+                 "Tarih: 05.11.2026, saat 14:30", "Telefon: +90 532 123 45 67",
+                 "2026'da, 5. kat, 4'e 3, 100'den fazla", "1 200 000 lira, 3,5 kg, 12 km", "Bugün 😂😂 çok güldük 👍🏽 sağ ol 🙏",
+                 "Fiyat 2+2=4, a<b, x×y, 10÷2, ±3, ∞, →", "© 2026 ElnurTTS™, İstanbul ®", "№5, § 3, • madde, 1‰"]
     for w in words: C.append(("metin " + w, sp(w)))
     C.append(("telephone 2026", "<speak>Yıl " + tel("2026") + "</speak>"))
     C.append(("ondalık bölünmüş 0,365", "<speak>Değer 0," + tel("365") + ".</speak>"))

@@ -36,6 +36,9 @@ public final class ElnurEngine {
 
     public init() throws {
         catalog = try ElnurVoiceCatalog.load()
+        TextNormalizer.emojiTableURL = { lang in
+            ElnurVoiceCatalog.bundle.url(forResource: "emoji_\(lang)", withExtension: "txt", subdirectory: "Emoji")
+        }
         guard let data = ElnurVoiceCatalog.bundle.url(forResource: "ElnurData", withExtension: nil) else {
             throw ElnurError.missingResource("ElnurData")
         }
@@ -146,7 +149,10 @@ public final class ElnurEngine {
                            onChunk: (([Float]) -> Void)? = nil,
                            shouldContinue: (() -> Bool)? = nil) throws -> [Float] {
         let voice = try self.voice(id: voiceID)
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Motorun okumadigi semboller (₼ $ € × → & @ = < > ...) Android ile ayni adlarla yazilir.
+        let normalize = !characters && (voice.language.hasPrefix("az") || voice.language.hasPrefix("tr"))
+        let prepared = normalize ? TextNormalizer.normalize(text, language: voice.language, options: .elnurTTS) : text
+        let trimmed = prepared.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty { return [] }
 
         lock.lock()

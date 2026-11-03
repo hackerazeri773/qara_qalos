@@ -56,7 +56,10 @@ final class TextCoverageTests: XCTestCase {
                 let voiced = Self.voicedSeconds(samples, rate: rate)
                 let status = voiced < 0.08 ? "SESSIZ" : "ok"
                 if status != "ok" { silent.append("\(lang) \(name)") }
-                let phonemes = chunks.map { ($0.useCharacterMode ? "[K]" : "") + $0.text }.joined(separator: " / ")
+                let phonemes = chunks.map { c in
+                    c.useCharacterMode ? "[K]" + c.text
+                        : TextNormalizer.normalize(c.text, language: lang, options: .elnurTTS)
+                }.joined(separator: " / ")
                 lines.append([lang, String(format: "%03d", index), status, String(format: "%.2f", seconds),
                               String(format: "%.2f", voiced), Self.clean(name), Self.clean(request.text),
                               Self.clean(phonemes)].joined(separator: "\t"))

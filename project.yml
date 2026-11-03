@@ -34,6 +34,9 @@ targets:
         buildPhase: resources
       - path: ElnurKit/Resources/ElnurVoices.json
         buildPhase: resources
+      - path: ElnurKit/Resources/Emoji
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: ElnurTTSEngine
     settings:
