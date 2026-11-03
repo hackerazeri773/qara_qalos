@@ -145,7 +145,7 @@ jobs:
           mkdir -p out
           R=$(mktemp -d)
           cp out/*.wav out/rapor.txt out/model_indirme.log out/kurulum.log "$R"/ 2>/dev/null || true
-          if [ -d out/ekran ]; then mkdir -p "$R/ekran" && cp out/ekran/* "$R/ekran/"; fi
+          if ls out/ekran/*.png >/dev/null 2>&1; then mkdir -p "$R/ekran" && cp out/ekran/*.png "$R/ekran/"; fi
           if [ -d out/metin ]; then mkdir -p "$R/metin" && cp out/metin/* "$R/metin/"; fi
           if [ -f out/xcodebuild.log ]; then
             grep -nE "error:|warning: .*Elnur|failed|FAILED|MOTOR |HIZ |SENTEZ |SISTEM |Test Case|Test Suite|XCTAssert|fatal" out/xcodebuild.log | head -400 > "$R/onemli_satirlar.txt" || true

@@ -58,13 +58,9 @@ struct VoiceAppView: View {
     /// Sesler dile gore; cihazin dili en ustte.
     private var groups: [(language: String, voices: [VoiceItem])] {
         let device = String((Locale.preferredLanguages.first ?? "en").prefix(2))
-        var order: [String] = []
-        for v in config.voices where !order.contains(v.language) { order.append(v.language) }
-        order.sort { a, b in
-            let ad = a.hasPrefix(device), bd = b.hasPrefix(device)
-            if ad != bd { return ad }
-            return (order.firstIndex(of: a) ?? 0) < (order.firstIndex(of: b) ?? 0)
-        }
+        var original: [String] = []
+        for v in config.voices where !original.contains(v.language) { original.append(v.language) }
+        let order = original.filter { $0.hasPrefix(device) } + original.filter { !$0.hasPrefix(device) }
         return order.map { lang in (lang, config.voices.filter { $0.language == lang }) }
     }
 
