@@ -101,6 +101,21 @@ jobs:
             -resultBundlePath out/TestResults.xcresult \
             2>&1 | tee -a out/xcodebuild.log | (command -v xcbeautify >/dev/null && xcbeautify --renderer github-actions || cat)
 
+      - name: Ekran goruntuleri (4 dil)
+        if: always()
+        run: |
+          mkdir -p out/ekran
+          xcrun simctl status_bar "$SIM" override --time 9:41 --batteryState charged --batteryLevel 100 || true
+          for L in az tr en ru; do
+            for P in top try vo; do
+              xcrun simctl terminate "$SIM" az.elnurtts.app || true
+              xcrun simctl launch "$SIM" az.elnurtts.app -AppleLanguages "($L)" -AppleLocale "$L" -demoScroll "$P" >/dev/null
+              sleep 6
+              xcrun simctl io "$SIM" screenshot "out/ekran/${L}_${P}.png" || true
+            done
+          done
+          ls out/ekran
+
       - name: Test ciktilarini ozetle
         if: always()
         run: |
@@ -130,6 +145,7 @@ jobs:
           mkdir -p out
           R=$(mktemp -d)
           cp out/*.wav out/rapor.txt out/model_indirme.log out/kurulum.log "$R"/ 2>/dev/null || true
+          if [ -d out/ekran ]; then mkdir -p "$R/ekran" && cp out/ekran/* "$R/ekran/"; fi
           if [ -d out/metin ]; then mkdir -p "$R/metin" && cp out/metin/* "$R/metin/"; fi
           if [ -f out/xcodebuild.log ]; then
             grep -nE "error:|warning: .*Elnur|failed|FAILED|MOTOR |HIZ |SENTEZ |SISTEM |Test Case|Test Suite|XCTAssert|fatal" out/xcodebuild.log | head -400 > "$R/onemli_satirlar.txt" || true
