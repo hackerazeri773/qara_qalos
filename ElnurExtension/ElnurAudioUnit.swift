@@ -77,14 +77,23 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
             var limited = 0
             do {
                 let engine = try ElnurEngine.shared()
-                for sentence in TextSplitter.sentences(text) {
-                    guard stream.isCurrent(token) else { return }
-                    _ = try engine.synthesize(text: sentence, voiceID: voiceID,
-                                              rate: rate, pitch: pitch, volume: volume,
-                                              onChunk: { chunk in stream.append(chunk, token: token) },
-                                              shouldContinue: { stream.isCurrent(token) })
-                    peak = max(peak, engine.lastPeak)
-                    limited += engine.lastLimitedSamples
+                let language = (try? engine.voice(id: voiceID).language) ?? "az-AZ"
+                let chunks: [SpeechChunk] = isDiagnostic
+                    ? [SpeechChunk(text: text, useCharacterMode: false)]
+                    : SpeechPlanner.plan(request, language: language, engineCharacterMode: true,
+                                         engineSilentSymbols: ElnurEngine.characterModeSilentSymbols)
+                for chunk in chunks {
+                    let pieces = chunk.useCharacterMode ? [chunk.text] : TextSplitter.sentences(chunk.text)
+                    for piece in pieces {
+                        guard stream.isCurrent(token) else { return }
+                        _ = try engine.synthesize(text: piece, voiceID: voiceID,
+                                                  rate: rate, pitch: pitch, volume: volume,
+                                                  characters: chunk.useCharacterMode,
+                                                  onChunk: { c in stream.append(c, token: token) },
+                                                  shouldContinue: { stream.isCurrent(token) })
+                        peak = max(peak, engine.lastPeak)
+                        limited += engine.lastLimitedSamples
+                    }
                 }
             } catch {
                 Self.log.error("Sentez hatasi: \(error.localizedDescription, privacy: .public)")

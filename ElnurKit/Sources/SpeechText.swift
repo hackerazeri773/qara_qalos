@@ -1,8 +1,21 @@
 import Foundation
 
+/// SSML'nin bir parcasi: duz metin ya da harf harf okunacak bolum
+/// (VoiceOver harf harf gezinirken <say-as interpret-as="characters"> gonderir).
+public struct SpeechSegment: Equatable {
+    public var text: String
+    public var isCharacters: Bool
+    public init(text: String, isCharacters: Bool) {
+        self.text = text
+        self.isCharacters = isCharacters
+    }
+}
+
 /// VoiceOver'in gonderdigi SSML'den duz metin ve hiz/perde bilgisini cikarir.
 public struct SpeechRequestText {
     public var text: String
+    /// Metnin parcalari (harf harf okunacak bolumler ayri isaretli).
+    public var segments: [SpeechSegment] = []
     /// Konusma hizi carpani (1.0 normal, 2.0 iki kat hizli).
     public var rate: Double = 1.0
     /// Perde carpani (1.0 normal).
@@ -21,6 +34,7 @@ public struct SpeechRequestText {
             parser.delegate = handler
             if parser.parse() {
                 var result = SpeechRequestText(text: handler.text)
+                result.segments = handler.segments
                 if let r = handler.rate { result.rate = r }
                 if let p = handler.pitch { result.pitch = p }
                 if let v = handler.volume { result.volume = v }
@@ -37,7 +51,9 @@ public struct SpeechRequestText {
             .replacingOccurrences(of: "&quot;", with: "\"")
             .replacingOccurrences(of: "&apos;", with: "'")
             .replacingOccurrences(of: "&amp;", with: "&")
-        return SpeechRequestText(text: stripped)
+        var result = SpeechRequestText(text: stripped)
+        result.segments = [SpeechSegment(text: stripped, isCharacters: false)]
+        return result
     }
 
     /// "150%", "+20%", "fast", "1.5" gibi degerleri carpana cevirir.
@@ -58,6 +74,17 @@ public struct SpeechRequestText {
 
     private final class SSMLHandler: NSObject, XMLParserDelegate {
         var text = ""
+        var segments: [SpeechSegment] = []
+        private var characterDepth = 0
+        private var sayAsStack: [Bool] = []
+
+        private func appendSegment(_ string: String, characters: Bool) {
+            if let last = segments.last, last.isCharacters == characters {
+                segments[segments.count - 1].text += string
+            } else {
+                segments.append(SpeechSegment(text: string, isCharacters: characters))
+            }
+        }
         var rate: Double?
         var pitch: Double?
         var volume: Double?
@@ -84,15 +111,31 @@ public struct SpeechRequestText {
                     "x-low": 0.8, "low": 0.9, "medium": 1.0, "default": 1.0, "high": 1.1, "x-high": 1.2]) {
                     pitch = m
                 }
+            case "say-as":
+                let kind = (attributes["interpret-as"] ?? "").lowercased()
+                let spell = ["characters", "spell-out", "letters", "verbatim"].contains(kind)
+                sayAsStack.append(spell)
+                if spell { characterDepth += 1 }
             case "break", "p", "s":
-                if !text.isEmpty && !text.hasSuffix(" ") { text += " " }
+                if !text.isEmpty && !text.hasSuffix(" ") {
+                    text += " "
+                    appendSegment(" ", characters: false)
+                }
             default:
                 break
             }
         }
 
+        func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?,
+                    qualifiedName qName: String?) {
+            if elementName.lowercased() == "say-as", let spell = sayAsStack.popLast(), spell {
+                characterDepth = max(0, characterDepth - 1)
+            }
+        }
+
         func parser(_ parser: XMLParser, foundCharacters string: String) {
             text += string
+            appendSegment(string, characters: characterDepth > 0)
         }
     }
 }

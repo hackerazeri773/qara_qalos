@@ -7,6 +7,10 @@ import ElnurTTSEngine
 /// Hangi sesin hangisini kullanacagi ElnurVoices.json icindeki "quality" alanindan gelir.
 public final class ElnurEngine {
     public let catalog: ElnurVoiceCatalog
+
+    /// Motorun karakter modunda da ses vermeyen semboller (olcumle bulundu);
+    /// bunlar icin SpeechPlanner'in sembol adlari kullanilir.
+    public static let characterModeSilentSymbols: Set<Character> = ["@", "&", "=", "<", ">", "|", "~", "^", "$"]
     public var outputSampleRate: Int { catalog.outputSampleRate }
 
     private let dataPath: String
@@ -112,6 +116,17 @@ public final class ElnurEngine {
         return created
     }
 
+    /// Azerice/Turkce seslerde Kiril harfli bolumleri Rusca ses okur (RHVoice ses
+    /// profili: "Gulnar+Svetlana"). Ayni yazi sistemi oldugu icin Latin harfli
+    /// Ingilizce kelimeler yine ana sesle okunur.
+    func voiceProfile(for voice: ElnurVoiceInfo) -> String {
+        let lang = voice.language.prefix(2)
+        guard lang == "az" || lang == "tr" else { return voice.name }
+        let partner = voice.gender == "male" ? "Dimitry" : "Svetlana"
+        guard catalog.voices.contains(where: { $0.name == partner }) else { return voice.name }
+        return voice.name + "+" + partner
+    }
+
     /// Modeli onceden yukler (ilk konusmadaki gecikmeyi azaltir).
     public func preload(voiceID: String) {
         _ = try? synthesize(text: ".", voiceID: voiceID)
@@ -127,6 +142,7 @@ public final class ElnurEngine {
     ///   - shouldContinue: false donerse sentez yarida kesilir.
     public func synthesize(text: String, voiceID: String,
                            rate: Double = 1, pitch: Double = 1, volume: Double = 1,
+                           characters: Bool = false,
                            onChunk: (([Float]) -> Void)? = nil,
                            shouldContinue: (() -> Bool)? = nil) throws -> [Float] {
         let voice = try self.voice(id: voiceID)
@@ -153,12 +169,14 @@ public final class ElnurEngine {
         synth.flags = 0
 
         let utf8 = Array(trimmed.utf8)
-        let ok: Bool = voice.name.withCString { profileC in
+        let profile = voiceProfile(for: voice)
+        let messageType = characters ? ElnurTTS_message_characters : ElnurTTS_message_text
+        let ok: Bool = profile.withCString { profileC in
             synth.voice_profile = profileC
             return utf8.withUnsafeBufferPointer { buf -> Bool in
                 buf.baseAddress!.withMemoryRebound(to: CChar.self, capacity: utf8.count) { textC in
                     guard let message = ElnurTTS_new_message(engine, textC, UInt32(utf8.count),
-                                                             ElnurTTS_message_text, &synth, userData) else {
+                                                             messageType, &synth, userData) else {
                         return false
                     }
                     defer { ElnurTTS_delete_message(message) }

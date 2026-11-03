@@ -43,15 +43,20 @@ final class TextCoverageTests: XCTestCase {
                 let (name, ssml) = item
                 let request = SpeechRequestText.parse(ssml: ssml)
                 var samples: [Float] = []
-                for sentence in TextSplitter.sentences(request.text) {
-                    samples += try engine.synthesize(text: sentence, voiceID: voiceID)
+                let chunks = SpeechPlanner.plan(request, language: lang, engineCharacterMode: true,
+                                                engineSilentSymbols: ElnurEngine.characterModeSilentSymbols)
+                for chunk in chunks {
+                    let pieces = chunk.useCharacterMode ? [chunk.text] : TextSplitter.sentences(chunk.text)
+                    for piece in pieces {
+                        samples += try engine.synthesize(text: piece, voiceID: voiceID, characters: chunk.useCharacterMode)
+                    }
                 }
                 let rate = engine.outputSampleRate
                 let seconds = Double(samples.count) / Double(rate)
                 let voiced = Self.voicedSeconds(samples, rate: rate)
                 let status = voiced < 0.08 ? "SESSIZ" : "ok"
                 if status != "ok" { silent.append("\(lang) \(name)") }
-                let phonemes = "-"
+                let phonemes = chunks.map { ($0.useCharacterMode ? "[K]" : "") + $0.text }.joined(separator: " / ")
                 lines.append([lang, String(format: "%03d", index), status, String(format: "%.2f", seconds),
                               String(format: "%.2f", voiced), Self.clean(name), Self.clean(request.text),
                               Self.clean(phonemes)].joined(separator: "\t"))
