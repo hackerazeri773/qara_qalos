@@ -22,3 +22,7 @@
 "vo.step4" = "For Speak Selection and Speak Screen: Settings → Accessibility → Spoken Content → Voices.";
 "vo.title" = "Using with VoiceOver";
 "voice.hint" = "Plays a sample and selects this voice.";
+"lang.az" = "Azerbaijani";
+"lang.tr" = "Turkish";
+"lang.ru" = "Russian";
+"lang.en" = "English";

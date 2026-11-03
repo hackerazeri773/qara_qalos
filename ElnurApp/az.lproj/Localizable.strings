@@ -22,3 +22,7 @@
 "vo.step4" = "Seçiləni səsləndirmək və Ekranı səsləndirmək üçün: Ayarlar → Əlçatımlılıq → Səsləndirilən məzmun → Səslər.";
 "vo.title" = "VoiceOver ilə istifadə";
 "voice.hint" = "Nümunəni səsləndirir və bu səsi seçir.";
+"lang.az" = "Azərbaycan dili";
+"lang.tr" = "Türk dili";
+"lang.ru" = "Rus dili";
+"lang.en" = "İngilis dili";

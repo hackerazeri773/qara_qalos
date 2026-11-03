@@ -267,6 +267,9 @@ struct VoiceAppView: View {
 
     static func languageName(_ code: String) -> String {
         let lang = String(code.prefix(2))
+        let key = "lang." + lang
+        let own = L(key)
+        if own != key { return own }
         let name = Locale.current.localizedString(forLanguageCode: lang) ?? code
         return name.prefix(1).uppercased() + name.dropFirst()
     }
