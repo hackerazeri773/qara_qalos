@@ -104,7 +104,7 @@ jobs:
       - name: Test ciktilarini ozetle
         if: always()
         run: |
-          grep -hE "IPA \[|SENTEZ |SISTEM |error:|XCTAssert|failed|Test Suite .* (passed|failed)" out/xcodebuild.log | head -100 || true
+          grep -hE "IPA \[|SENTEZ |METIN |SISTEM |error:|XCTAssert|failed|Test Suite .* (passed|failed)" out/xcodebuild.log | head -100 || true
           ls -la out || true
 
       - name: Imzasiz iPhone .ipa uret
@@ -130,6 +130,7 @@ jobs:
           mkdir -p out
           R=$(mktemp -d)
           cp out/*.wav out/rapor.txt out/model_indirme.log out/kurulum.log "$R"/ 2>/dev/null || true
+          if [ -d out/metin ]; then mkdir -p "$R/metin" && cp out/metin/* "$R/metin/"; fi
           if [ -f out/xcodebuild.log ]; then
             grep -nE "error:|warning: .*Elnur|failed|FAILED|MOTOR |HIZ |SENTEZ |SISTEM |Test Case|Test Suite|XCTAssert|fatal" out/xcodebuild.log | head -400 > "$R/onemli_satirlar.txt" || true
             tail -n 400 out/xcodebuild.log > "$R/log_son_400.txt"
