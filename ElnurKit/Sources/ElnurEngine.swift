@@ -70,24 +70,19 @@ public final class ElnurEngine {
 
     /// Kalite ayari yalnizca yapilandirma dosyasiyla verilebildigi icin her kalite
     /// icin ayri bir yapilandirma klasoru olusturulur.
+    /// Her kalite icin hazir ayar klasoru UYGULAMA PAKETININ ICINDE durur (ElnurConfig/std, /min).
+    /// Eklenti hicbir dosya YAZMAZ: telefon yeniden baslatildiginda, kilit ilk kez acilana kadar
+    /// yazilan dosyalar korumali oldugundan okunamaz/yazilamaz ve VoiceOver kilit ekraninda
+    /// sessiz kaliyordu. Paket icindeki dosyalar her zaman okunabilir.
     private func configDirectory(quality: String) throws -> String {
-        let fm = FileManager.default
-        let base = fm.temporaryDirectory.appendingPathComponent("ElnurTTSConfig-\(quality)", isDirectory: true)
-        try? fm.removeItem(at: base)
-        try fm.createDirectory(at: base, withIntermediateDirectories: true)
-        var conf = ""
-        if let bundled = ElnurVoiceCatalog.bundle.url(forResource: "ElnurConfig", withExtension: nil) {
-            let confURL = bundled.appendingPathComponent("ElnurTTS.conf")
-            conf = (try? String(contentsOf: confURL, encoding: .utf8)) ?? ""
-            let dicts = bundled.appendingPathComponent("dicts")
-            if fm.fileExists(atPath: dicts.path) {
-                try? fm.copyItem(at: dicts, to: base.appendingPathComponent("dicts"))
-            }
+        guard let url = ElnurVoiceCatalog.bundle.url(forResource: "ElnurConfig", withExtension: nil)?
+            .appendingPathComponent(quality == "min" ? "min" : "std", isDirectory: true),
+              FileManager.default.fileExists(atPath: url.appendingPathComponent("ElnurTTS.conf").path) else {
+            throw ElnurError.missingResource("ElnurConfig/\(quality)")
         }
-        conf += "\nquality=\(quality)\n"
-        try conf.write(to: base.appendingPathComponent("ElnurTTS.conf"), atomically: true, encoding: .utf8)
-        return base.path
+        return url.path
     }
+
 
     private func engine(quality: String) throws -> ElnurTTS_tts_engine {
         if let existing = engines[quality] { return existing }

@@ -59,7 +59,6 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         let pitch = VoiceOverMapping.pitchMultiplier(for: request)
         let volume = VoiceOverMapping.volumeMultiplier(for: request)
         Self.log.info("SSML rate=\(request.rawRate ?? "-", privacy: .public) pitch=\(request.rawPitch ?? "-", privacy: .public) volume=\(request.rawVolume ?? "-", privacy: .public) -> x\(rate, privacy: .public)")
-        DiagnosticsLog.record(ssml: ssml, rate: rate, pitch: pitch, volume: volume)
 
         // Tani modu: metinde "elnurtts tani" geciyorsa son isteklerin degerlerini seslendir.
         let lowered = request.text.lowercased()
