@@ -37,4 +37,22 @@ final class NormalizerTests: XCTestCase {
         for f in failures { print("NORMALIZE HATA: \(f)") }
         XCTAssertTrue(failures.isEmpty, failures.joined(separator: "\n"))
     }
+
+    func test0d_VoiceOverTermsAz() {
+        let cases: [(String, String)] = [
+            ("Ayarlar, Button", "Ayarlar, düymə"),
+            ("Wi-Fi, Switch button, On", "Wi-Fi, keçirici, açıq"),
+            ("Xəbərlər, Heading", "Xəbərlər, başlıq"),
+            ("Double tap to activate.", "aktivləşdirmək üçün iki dəfə toxunun."),
+            ("Mesajlar, 3 of 5", "Mesajlar, 3, cəmi 5"),
+            ("On il keçdi", "On il keçdi"),
+            ("Bu button sözü", "Bu button sözü"),
+        ]
+        for (input, expected) in cases {
+            let got = VoiceOverTerms.localize(input, language: "az-AZ")
+            print("VOTERMS \(input) => \(got)")
+            XCTAssertEqual(got, expected)
+        }
+        XCTAssertEqual(VoiceOverTerms.localize("Ayarlar, Button", language: "tr-TR"), "Ayarlar, Button")
+    }
 }
