@@ -42,7 +42,8 @@ final class NormalizerTests: XCTestCase {
         _ = try ElnurEngine.shared()   // emoji/sembol tablosu yolu
         func spoken(_ c: String) -> String {
             let r = SpeechRequestText.parse(ssml: "<speak><say-as interpret-as=\"characters\">\(c)</say-as></speak>")
-            return SpeechPlanner.plan(r, language: "az-AZ", engineCharacterMode: true).map(\.text).joined(separator: " ")
+            return SpeechPlanner.plan(r, language: "az-AZ", engineCharacterMode: true,
+                                      engineSilentSymbols: ElnurEngine.characterModeSilentSymbols).map(\.text).joined(separator: " ")
         }
         XCTAssertEqual(spoken("⇒"), "sağa doğru ikili ox")   // CLDR tablosundan
         XCTAssertEqual(spoken("‰"), "promil")                 // elle eklenen
