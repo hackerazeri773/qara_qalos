@@ -73,6 +73,10 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         // Tani icin: VoiceOver'in gonderdigi ham metin (say-as isaretleri dahil degil)
         let ssmlText = request.text
         let hadCharacters = request.segments.contains(where: \.isCharacters)
+        // TANI: VoiceOver'in gonderdigi istek iPhone'un sistem kaydina yazilir (dosya yazilmaz).
+        // Bilgisayarda idevicesyslog ile "VOREQ" satirlari okunur. Son kullanici surumunde kaldirilacak.
+        let codes = ssmlText.unicodeScalars.prefix(40).map { String(format: "%04X", $0.value) }.joined(separator: " ")
+        Self.log.notice("VOREQ ElnurTTS voice=\(voiceID, privacy: .public) chars=\(hadCharacters, privacy: .public) text=[\(ssmlText, privacy: .public)] codes=[\(codes, privacy: .public)] ssml=\(ssml.replacingOccurrences(of: "\n", with: " "), privacy: .public)")
         let lowered = request.text.lowercased()
         let isDiagnostic = lowered.contains("elnurtts tanı") || lowered.contains("elnurtts tani")
         let text: String

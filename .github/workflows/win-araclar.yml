@@ -1,0 +1,45 @@
+# Windows icin iPhone sistem kaydi araci (libimobiledevice, MSYS2 paketi).
+# Cikti "araclar" dalina zip olarak yazilir.
+name: windows-araclari
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  paketle:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-libimobiledevice
+            mingw-w64-ucrt-x86_64-ntldd
+            zip
+      - name: Araclari ve DLL'leri topla
+        run: |
+          mkdir -p iphone_kayit
+          for t in idevicesyslog idevice_id ideviceinfo; do cp /ucrt64/bin/$t.exe iphone_kayit/; done
+          for f in iphone_kayit/*.exe; do
+            ntldd -R "$f" | grep -i ucrt64 | sed -E 's/.*=> ([^ ]+).*/\1/' | tr '\\' '/' | while read d; do
+              d=$(cygpath -u "$d"); [ -f "$d" ] && cp -n "$d" iphone_kayit/
+            done
+          done
+          ls -la iphone_kayit
+          ./iphone_kayit/idevicesyslog.exe --help | head -30 || true
+          zip -qr iphone_kayit.zip iphone_kayit
+      - name: Dala yaz
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          R=$(mktemp -d); cp iphone_kayit.zip "$R"/; cd "$R"
+          git init -q -b araclar
+          git config user.name github-actions; git config user.email github-actions@users.noreply.github.com
+          git add -A; git commit -qm araclar
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" araclar
