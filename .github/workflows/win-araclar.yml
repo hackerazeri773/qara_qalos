@@ -24,16 +24,18 @@ jobs:
             zip
       - name: Araclari ve DLL'leri topla
         run: |
+          set +e
           mkdir -p iphone_kayit
           for t in idevicesyslog idevice_id ideviceinfo; do cp /ucrt64/bin/$t.exe iphone_kayit/; done
           for f in iphone_kayit/*.exe; do
             ntldd -R "$f" | grep -i ucrt64 | sed -E 's/.*=> ([^ ]+).*/\1/' | tr '\\' '/' | while read d; do
-              d=$(cygpath -u "$d"); [ -f "$d" ] && cp -n "$d" iphone_kayit/
+              d=$(cygpath -u "$d"); if [ -f "$d" ]; then cp -n "$d" iphone_kayit/; fi
             done
           done
           ls -la iphone_kayit
           ./iphone_kayit/idevicesyslog.exe --help | head -30 || true
           zip -qr iphone_kayit.zip iphone_kayit
+          ls -la iphone_kayit.zip
       - name: Dala yaz
         env:
           GH_TOKEN: ${{ github.token }}
