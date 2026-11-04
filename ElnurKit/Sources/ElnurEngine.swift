@@ -10,7 +10,7 @@ public final class ElnurEngine {
 
     /// Motorun karakter modunda da ses vermeyen semboller (olcumle bulundu);
     /// bunlar icin SpeechPlanner'in sembol adlari kullanilir.
-    public static let characterModeSilentSymbols: Set<Character> = ["@", "&", "=", "<", ">", "|", "~", "^", "$"]
+    public static let characterModeSilentSymbols: Set<Character> = ["@", "&", "=", "<", ">", "|", "~", "^", "$", "`", "‘", "’", "„", "¡", "¿", "‰", "′", "″", "¢", "¥", "¶", "†", "‡", "¤", "‹", "›"]
     public var outputSampleRate: Int { catalog.outputSampleRate }
 
     private let dataPath: String

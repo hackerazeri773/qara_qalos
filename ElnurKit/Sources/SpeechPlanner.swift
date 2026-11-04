@@ -38,6 +38,10 @@ public enum SpeechPlanner {
             "∞": "sonsuzluq", "≠": "bərabər deyil", "≤": "kiçik və ya bərabər",
             "≥": "böyük və ya bərabər", "→": "sağ ox", "←": "sol ox", "↑": "yuxarı ox",
             "↓": "aşağı ox", "−": "çıx",
+            "`": "tərs apostrof", "‘": "tək dırnaq açılır", "’": "tək dırnaq bağlanır", "„": "alt dırnaq",
+            "¡": "tərs nida işarəsi", "¿": "tərs sual işarəsi", "‰": "promil", "′": "ştrix", "″": "qoşa ştrix",
+            "¢": "sent", "¥": "yen", "¶": "abzas", "†": "xaç", "‡": "qoşa xaç", "¤": "valyuta işarəsi",
+            "‹": "tək bucaq dırnaq açılır", "›": "tək bucaq dırnaq bağlanır",
         ],
         "tr": [
             ",": "virgül", ".": "nokta", "?": "soru işareti", "!": "ünlem",
@@ -58,8 +62,16 @@ public enum SpeechPlanner {
             "∞": "sonsuz", "≠": "eşit değildir", "≤": "küçük eşittir",
             "≥": "büyük eşittir", "→": "sağ ok", "←": "sol ok", "↑": "yukarı ok",
             "↓": "aşağı ok", "−": "eksi",
+            "`": "ters kesme", "‘": "tek tırnak aç", "’": "tek tırnak kapat", "„": "alt tırnak",
+            "¡": "ters ünlem", "¿": "ters soru işareti", "‰": "binde", "′": "üssü", "″": "çift üssü",
+            "¢": "sent", "¥": "yen", "¶": "paragraf işareti", "†": "haç", "‡": "çift haç", "¤": "para birimi işareti",
+            "‹": "tek açılı tırnak aç", "›": "tek açılı tırnak kapat",
         ],
     ]
+
+    static func isEmoji(_ c: Character) -> Bool {
+        c.unicodeScalars.contains { $0.properties.isEmojiPresentation || $0.value >= 0x1F000 }
+    }
 
     public static func symbolName(_ c: Character, language: String) -> String? {
         symbolNames[String(language.prefix(2))]?[c]
@@ -98,6 +110,13 @@ public enum SpeechPlanner {
             }
             for c in segment.text where !c.isWhitespace {
                 let name = symbolName(c, language: language)
+                // Tabloda yoksa: harf/rakam/emoji olmayan semboller icin CLDR adi (Android'deki
+                // emoji_<dil>.txt; ~1500 sembol, para birimi, matematik isareti).
+                if name == nil, !c.isLetter, !c.isNumber, !isEmoji(c),
+                   let cldr = TextNormalizer.emojiName(c, language: language) {
+                    add(cldr, characterMode: false)
+                    continue
+                }
                 if let name, !engineCharacterMode || engineSilentSymbols.contains(c) {
                     add(name, characterMode: false)
                 } else if engineCharacterMode {

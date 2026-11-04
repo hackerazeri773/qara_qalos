@@ -37,4 +37,16 @@ final class NormalizerTests: XCTestCase {
         for f in failures { print("NORMALIZE HATA: \(f)") }
         XCTAssertTrue(failures.isEmpty, failures.joined(separator: "\n"))
     }
+
+    func test0e_CharacterSymbolsAz() throws {
+        _ = try ElnurEngine.shared()   // emoji/sembol tablosu yolu
+        func spoken(_ c: String) -> String {
+            let r = SpeechRequestText.parse(ssml: "<speak><say-as interpret-as=\"characters\">\(c)</say-as></speak>")
+            return SpeechPlanner.plan(r, language: "az-AZ", engineCharacterMode: true).map(\.text).joined(separator: " ")
+        }
+        XCTAssertEqual(spoken("⇒"), "sağa doğru ikili ox")   // CLDR tablosundan
+        XCTAssertEqual(spoken("‰"), "promil")                 // elle eklenen
+        XCTAssertEqual(spoken("ə"), "ə")                      // harf: motor okur
+        print("SEMBOL ⇒ \(spoken("⇒")) | ‰ \(spoken("‰")) | ¤ \(spoken("¤"))")
+    }
 }
