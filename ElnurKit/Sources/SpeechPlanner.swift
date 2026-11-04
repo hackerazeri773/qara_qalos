@@ -70,9 +70,10 @@ public enum SpeechPlanner {
     ]
 
     private static let schwaPattern = try! NSRegularExpression(
-        pattern: #"^\s*(?:(büyük|buyuk|böyük|capital)\s+)?schwa\s*$"#, options: [.caseInsensitive])
+        pattern: #"^\s*(?:(büyük|buyuk|böyük|capital)\s+)?(?:schwa|\(null\))\s*$"#, options: [.caseInsensitive])
 
-    /// "schwa" / "Büyük schwa" -> ə / Ə harfi (motorun karakter moduyla).
+    /// "schwa" / "Büyük schwa" -> ə / Ə harfi (motorun karakter moduyla). VoiceOver'in Turkcesinde
+    /// "ə" icin fonetik kelime olmadigindan harf tusunda bir de "Büyük (null)" gonderiliyor.
     static func schwaKey(_ text: String) -> [SpeechChunk]? {
         let ns = text as NSString
         guard let m = schwaPattern.firstMatch(in: text, range: NSRange(location: 0, length: ns.length)) else { return nil }
@@ -123,7 +124,9 @@ public enum SpeechPlanner {
 
         for segment in segments {
             if !segment.isCharacters {
-                let t = segment.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                // Azerbaycanca seste VoiceOver'in Turkce noktalama/sembol adlari Azerbaycanca okunur.
+                let t = VoiceOverPunctuation.localize(segment.text, language: language)
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
                 if !t.isEmpty { add(t, characterMode: false) }
                 continue
             }

@@ -61,4 +61,20 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(plan("schwa", "tr-TR"), ["schwa"])
         XCTAssertEqual(plan("Bu schwa sözü", "az-AZ"), ["Bu schwa sözü"])
     }
+
+    func test0g_TurkishPunctuationNamesAz() {
+        let az = "az-AZ"
+        XCTAssertEqual(VoiceOverPunctuation.localize("virgül", language: az), "vergül")
+        XCTAssertEqual(VoiceOverPunctuation.localize("soru işareti", language: az), "sual işarəsi")
+        XCTAssertEqual(VoiceOverPunctuation.localize("Salam virgül  mənim adım Feride nokta", language: az),
+                       "Salam vergül  mənim adım Feride nöqtə")
+        XCTAssertEqual(VoiceOverPunctuation.localize("1 nokta  Ayarlar sağ ok  Erişilebilirlik", language: az),
+                       "1 nöqtə  Ayarlar sağ ox  Erişilebilirlik")
+        XCTAssertEqual(VoiceOverPunctuation.localize("noktalı virgül", language: az), "nöqtəli vergül")
+        XCTAssertEqual(VoiceOverPunctuation.localize("Rotor Dilleri kesme işareti ne", language: az), "Rotor Dilleri apostrof ne")
+        XCTAssertEqual(VoiceOverPunctuation.localize("yıldız", language: az), "ulduz")             // tek basina
+        XCTAssertEqual(VoiceOverPunctuation.localize("Yıldız Hanım geldi", language: az), "Yıldız Hanım geldi") // cumle ici: dokunma
+        XCTAssertEqual(VoiceOverPunctuation.localize("noktalı yazı", language: az), "noktalı yazı")
+        XCTAssertEqual(VoiceOverPunctuation.localize("virgül", language: "tr-TR"), "virgül")
+    }
 }

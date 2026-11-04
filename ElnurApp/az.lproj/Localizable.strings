@@ -17,7 +17,7 @@
 "try.title" = "Öz mətninizi sınayın";
 "vo.footer" = "Səslər siyahıda görünmürsə, bu tətbiqi bir dəfə açın, bir neçə saniyə gözləyin, sonra VoiceOver-i söndürüb yenidən yandırın.";
 "vo.step1" = "Ayarlar → Əlçatımlılıq → VoiceOver → Nitq → Səs bölməsini açın (Settings → Accessibility → VoiceOver → Speech → Voice).";
-"vo.step2" = "Dili seçin və %@ səslərindən birini seçin.";
+"vo.step2" = "Dili seçin və %@ səslərindən birini seçin. Azərbaycan səsləri “Türkçe (Azerbaycan)” adı altındadır.";
 "vo.step3" = "Bir neçə dildən istifadə etmək üçün onları eyni menyuda Rotor dillərinə əlavə edin və rotorla dəyişin.";
 "vo.step4" = "Seçiləni səsləndirmək və Ekranı səsləndirmək üçün: Ayarlar → Əlçatımlılıq → Səsləndirilən məzmun → Səslər.";
 "vo.title" = "VoiceOver ilə istifadə";

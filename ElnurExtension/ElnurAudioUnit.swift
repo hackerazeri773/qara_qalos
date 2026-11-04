@@ -12,7 +12,6 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
     private var _outputBusses: AUAudioUnitBusArray!
 
     private let stream = SampleStream()
-    private static var lastRequestMs = 0
     private let workQueue = DispatchQueue(label: "az.elnurtts.synthesis", qos: .userInitiated)
 
     @objc
@@ -49,8 +48,7 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
     /// "Turkce (Turkiye)"den ayri oldugu icin rotorda ayri secilebilir. Motor yine sesin
     /// gercek dilini (az) kullanir; sayi/emoji/sozluk kurallari degismez.
     static func systemLanguage(_ language: String) -> String {
-        // Deneme: Azerbaycanca sesler yeniden "az-AZ" (VoiceOver sozleri Ingilizce gelir).
-        language
+        language.hasPrefix("az") ? "tr-AZ" : language
     }
 
     public override var outputBusses: AUAudioUnitBusArray { _outputBusses }
@@ -71,40 +69,12 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         let volume = VoiceOverMapping.volumeMultiplier(for: request)
         Self.log.info("SSML rate=\(request.rawRate ?? "-", privacy: .public) pitch=\(request.rawPitch ?? "-", privacy: .public) volume=\(request.rawVolume ?? "-", privacy: .public) -> x\(rate, privacy: .public)")
 
-        // Tani modu: metinde "elnurtts tani" geciyorsa son isteklerin degerlerini seslendir.
-        // Tani icin: VoiceOver'in gonderdigi ham metin (say-as isaretleri dahil degil)
-        let ssmlText = request.text
-        let hadCharacters = request.segments.contains(where: \.isCharacters)
-        // TANI: VoiceOver'in gonderdigi istek iPhone'un sistem kaydina yazilir (dosya yazilmaz).
-        // Bilgisayarda idevicesyslog ile "VOREQ" satirlari okunur. Son kullanici surumunde kaldirilacak.
-        let codes = ssmlText.unicodeScalars.prefix(40).map { String(format: "%04X", $0.value) }.joined(separator: " ")
-        let nowMs = Int(ProcessInfo.processInfo.systemUptime * 1000)
-        let gapMs = Self.lastRequestMs == 0 ? -1 : nowMs - Self.lastRequestMs
-        Self.lastRequestMs = nowMs
-        Self.log.notice("VOREQ ElnurTTS t=\(nowMs, privacy: .public) gap=\(gapMs, privacy: .public) voice=\(voiceID, privacy: .public) chars=\(hadCharacters, privacy: .public) text=[\(ssmlText, privacy: .public)] codes=[\(codes, privacy: .public)] ssml=\(ssml.replacingOccurrences(of: "\n", with: " "), privacy: .public)")
-        let lowered = request.text.lowercased()
-        let isDiagnostic = lowered.contains("elnurtts tanı") || lowered.contains("elnurtts tani")
-        let text: String
-        if isDiagnostic {
-            if let n = RequestHistory.shared.copyToPasteboard(appName: "ElnurTTS") {
-                text = "Qeyd kopyalandı. \(n) istək. İndi yapışdıra bilərsiniz."
-            } else {
-                text = "Kopyalamaq alınmadı. " + RequestHistory.shared.spokenSummary(appName: "ElnurTTS")
-            }
-        } else {
-            text = request.text
-        }
-
         let stream = self.stream
         workQueue.async {
-            var peak: Float = 0
-            var limited = 0
             do {
                 let engine = try ElnurEngine.shared()
                 let language = (try? engine.voice(id: voiceID).language) ?? "az-AZ"
-                let chunks: [SpeechChunk] = isDiagnostic
-                    ? [SpeechChunk(text: text, useCharacterMode: false)]
-                    : SpeechPlanner.plan(request, language: language, engineCharacterMode: true,
+                let chunks: [SpeechChunk] = SpeechPlanner.plan(request, language: language, engineCharacterMode: true,
                                          engineSilentSymbols: ElnurEngine.characterModeSilentSymbols)
                 for chunk in chunks {
                     let pieces = chunk.useCharacterMode ? [chunk.text] : TextSplitter.sentences(chunk.text)
@@ -115,16 +85,10 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
                                                   characters: chunk.useCharacterMode,
                                                   onChunk: { c in stream.append(c, token: token) },
                                                   shouldContinue: { stream.isCurrent(token) })
-                        peak = max(peak, engine.lastPeak)
-                        limited += engine.lastLimitedSamples
                     }
                 }
             } catch {
                 Self.log.error("Sentez hatasi: \(error.localizedDescription, privacy: .public)")
-            }
-            if !isDiagnostic {
-                RequestHistory.shared.add(ssml: ssml, text: ssmlText, characters: hadCharacters,
-                                          rawRate: request.rawRate, rawVolume: request.rawVolume)
             }
             stream.finish(token: token)
         }

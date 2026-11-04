@@ -17,7 +17,7 @@
 "try.title" = "Kendi metninizi deneyin";
 "vo.footer" = "Sesler listede görünmüyorsa bu uygulamayı bir kez açın, birkaç saniye bekleyin, sonra VoiceOver'ı kapatıp yeniden açın.";
 "vo.step1" = "Ayarlar → Erişilebilirlik → VoiceOver → Konuşma → Ses bölümünü açın.";
-"vo.step2" = "Dili seçin ve %@ seslerinden birini seçin.";
+"vo.step2" = "Dili seçin ve %@ seslerinden birini seçin. Azerbaycan sesleri “Türkçe (Azerbaycan)” altında yer alır.";
 "vo.step3" = "Birden fazla dil kullanmak için aynı menüde Rotor Dilleri'ne ekleyin ve rotorla değiştirin.";
 "vo.step4" = "Seçileni Seslendir ve Ekranı Seslendir için: Ayarlar → Erişilebilirlik → Seslendirilen İçerik → Sesler.";
 "vo.title" = "VoiceOver ile kullanım";
