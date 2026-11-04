@@ -12,6 +12,7 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
     private var _outputBusses: AUAudioUnitBusArray!
 
     private let stream = SampleStream()
+    private static var lastRequestMs = 0
     private let workQueue = DispatchQueue(label: "az.elnurtts.synthesis", qos: .userInitiated)
 
     @objc
@@ -48,7 +49,8 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
     /// "Turkce (Turkiye)"den ayri oldugu icin rotorda ayri secilebilir. Motor yine sesin
     /// gercek dilini (az) kullanir; sayi/emoji/sozluk kurallari degismez.
     static func systemLanguage(_ language: String) -> String {
-        language.hasPrefix("az") ? "tr-AZ" : language
+        // Deneme: Azerbaycanca sesler yeniden "az-AZ" (VoiceOver sozleri Ingilizce gelir).
+        language
     }
 
     public override var outputBusses: AUAudioUnitBusArray { _outputBusses }
@@ -76,7 +78,10 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         // TANI: VoiceOver'in gonderdigi istek iPhone'un sistem kaydina yazilir (dosya yazilmaz).
         // Bilgisayarda idevicesyslog ile "VOREQ" satirlari okunur. Son kullanici surumunde kaldirilacak.
         let codes = ssmlText.unicodeScalars.prefix(40).map { String(format: "%04X", $0.value) }.joined(separator: " ")
-        Self.log.notice("VOREQ ElnurTTS voice=\(voiceID, privacy: .public) chars=\(hadCharacters, privacy: .public) text=[\(ssmlText, privacy: .public)] codes=[\(codes, privacy: .public)] ssml=\(ssml.replacingOccurrences(of: "\n", with: " "), privacy: .public)")
+        let nowMs = Int(ProcessInfo.processInfo.systemUptime * 1000)
+        let gapMs = Self.lastRequestMs == 0 ? -1 : nowMs - Self.lastRequestMs
+        Self.lastRequestMs = nowMs
+        Self.log.notice("VOREQ ElnurTTS t=\(nowMs, privacy: .public) gap=\(gapMs, privacy: .public) voice=\(voiceID, privacy: .public) chars=\(hadCharacters, privacy: .public) text=[\(ssmlText, privacy: .public)] codes=[\(codes, privacy: .public)] ssml=\(ssml.replacingOccurrences(of: "\n", with: " "), privacy: .public)")
         let lowered = request.text.lowercased()
         let isDiagnostic = lowered.contains("elnurtts tanı") || lowered.contains("elnurtts tani")
         let text: String
