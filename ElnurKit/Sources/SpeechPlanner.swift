@@ -69,6 +69,20 @@ public enum SpeechPlanner {
         ],
     ]
 
+    private static let schwaPattern = try! NSRegularExpression(
+        pattern: #"^\s*(?:(büyük|buyuk|böyük|capital)\s+)?schwa\s*$"#, options: [.caseInsensitive])
+
+    /// "schwa" / "Büyük schwa" -> ə / Ə harfi (motorun karakter moduyla).
+    static func schwaKey(_ text: String) -> [SpeechChunk]? {
+        let ns = text as NSString
+        guard let m = schwaPattern.firstMatch(in: text, range: NSRange(location: 0, length: ns.length)) else { return nil }
+        let capital = m.range(at: 1).location != NSNotFound
+        var chunks: [SpeechChunk] = []
+        if capital { chunks.append(SpeechChunk(text: "Böyük", useCharacterMode: false)) }
+        chunks.append(SpeechChunk(text: capital ? "Ə" : "ə", useCharacterMode: true))
+        return chunks
+    }
+
     static func isEmoji(_ c: Character) -> Bool {
         c.unicodeScalars.contains { $0.properties.isEmojiPresentation || $0.value >= 0x1F000 }
     }
@@ -87,6 +101,11 @@ public enum SpeechPlanner {
         var segments = request.segments.isEmpty
             ? [SpeechSegment(text: request.text, isCharacters: false)]
             : request.segments
+        // Azerbaycanca sesler sisteme "tr-AZ" olarak tanitildigi icin VoiceOver Turkcede olmayan
+        // "ə" harfini klavyede Ingilizce Unicode adiyla ("schwa") gonderiyor. Harfin kendisi okunur.
+        if language.hasPrefix("az"), let schwa = schwaKey(request.text) {
+            return schwa
+        }
         // Tek karakterlik istek (ör. yazarken harf yankısı) da harf harf okunur.
         let trimmed = request.text.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.count == 1, !segments.contains(where: \.isCharacters) {

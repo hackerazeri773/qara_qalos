@@ -50,4 +50,15 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(spoken("ə"), "ə")                      // harf: motor okur
         print("SEMBOL ⇒ \(spoken("⇒")) | ‰ \(spoken("‰")) | ¤ \(spoken("¤"))")
     }
+
+    func test0f_SchwaKey() {
+        func plan(_ t: String, _ lang: String) -> [String] {
+            SpeechPlanner.plan(SpeechRequestText.parse(ssml: "<speak><lang xml:lang=\"tr\">\(t)</lang></speak>"),
+                               language: lang, engineCharacterMode: true).map { ($0.useCharacterMode ? "K:" : "") + $0.text }
+        }
+        XCTAssertEqual(plan(" schwa ", "az-AZ").last?.hasSuffix("ə"), true)
+        XCTAssertEqual(plan("Büyük schwa", "az-AZ").last?.hasSuffix("Ə"), true)
+        XCTAssertEqual(plan("schwa", "tr-TR"), ["schwa"])
+        XCTAssertEqual(plan("Bu schwa sözü", "az-AZ"), ["Bu schwa sözü"])
+    }
 }
