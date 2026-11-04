@@ -37,6 +37,7 @@ jobs:
           zip -qr iphone_kayit.zip iphone_kayit
           ls -la iphone_kayit.zip
       - name: Dala yaz
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
