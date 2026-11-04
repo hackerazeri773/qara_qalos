@@ -77,7 +77,11 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         let isDiagnostic = lowered.contains("elnurtts tanı") || lowered.contains("elnurtts tani")
         let text: String
         if isDiagnostic {
-            text = RequestHistory.shared.spokenSummary(appName: "ElnurTTS")
+            if let n = RequestHistory.shared.copyToPasteboard(appName: "ElnurTTS") {
+                text = "Qeyd kopyalandı. \(n) istək. İndi yapışdıra bilərsiniz."
+            } else {
+                text = "Kopyalamaq alınmadı. " + RequestHistory.shared.spokenSummary(appName: "ElnurTTS")
+            }
         } else {
             text = request.text
         }
@@ -110,7 +114,7 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
                 Self.log.error("Sentez hatasi: \(error.localizedDescription, privacy: .public)")
             }
             if !isDiagnostic {
-                RequestHistory.shared.add(text: ssmlText, characters: hadCharacters,
+                RequestHistory.shared.add(ssml: ssml, text: ssmlText, characters: hadCharacters,
                                           rawRate: request.rawRate, rawVolume: request.rawVolume)
             }
             stream.finish(token: token)

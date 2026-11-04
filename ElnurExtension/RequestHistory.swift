@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// Eklentinin aldigi son isteklerin degerleri ve HAM metni (tani icin, YALNIZCA BELLEKTE;
 /// dosya yazilmaz, kilit ekrani sorununu geri getirmez). Bir yere "<uygulama> tanı" yazip
@@ -7,6 +8,8 @@ final class RequestHistory {
     static let shared = RequestHistory()
 
     struct Entry {
+        let time: Date
+        let ssml: String
         let text: String
         let characters: Bool
         let rawRate: String?
@@ -16,12 +19,12 @@ final class RequestHistory {
     private let lock = NSLock()
     private var entries: [Entry] = []
 
-    func add(text: String, characters: Bool, rawRate: String?, rawVolume: String?) {
+    func add(ssml: String, text: String, characters: Bool, rawRate: String?, rawVolume: String?) {
         lock.lock()
         defer { lock.unlock() }
-        entries.append(Entry(text: String(text.prefix(200)), characters: characters,
+        entries.append(Entry(time: Date(), ssml: String(ssml.prefix(600)), text: String(text.prefix(200)), characters: characters,
                              rawRate: rawRate, rawVolume: rawVolume))
-        if entries.count > 30 { entries.removeFirst(entries.count - 30) }
+        if entries.count > 60 { entries.removeFirst(entries.count - 60) }
     }
 
     /// Ozel karakterlerin Unicode kodu, rakam rakam: "ə" -> "0 2 5 9".
@@ -54,5 +57,34 @@ final class RequestHistory {
             parts.append(line)
         }
         return parts.joined(separator: " ")
+    }
+
+    /// Kaydin tamamini panoya kopyalar (kullanici bu sohbete yapistirir).
+    /// Donus: kopyalanan istek sayisi; pano yazmaya izin vermezse nil.
+    func copyToPasteboard(appName: String) -> Int? {
+        lock.lock()
+        let all = entries
+        lock.unlock()
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss"
+        var lines = ["\(appName) tanı kaydı, \(all.count) istək (köhnədən yeniyə)"]
+        for (i, e) in all.enumerated() {
+            let codes = e.text.unicodeScalars.map { String(format: "%04X", $0.value) }.prefix(40).joined(separator: " ")
+            lines.append("#\(i + 1) \(f.string(from: e.time))\(e.characters ? " [hərf-hərf]" : "")")
+            lines.append("  mətn: \(e.text)")
+            lines.append("  kod: \(codes)")
+            lines.append("  ssml: \(e.ssml.replacingOccurrences(of: "\n", with: " "))")
+        }
+        let text = lines.joined(separator: "\n")
+        var before = 0
+        var after = 0
+        let work = {
+            let pb = UIPasteboard.general
+            before = pb.changeCount
+            pb.string = text
+            after = pb.changeCount
+        }
+        if Thread.isMainThread { work() } else { DispatchQueue.main.sync(execute: work) }
+        return after != before ? all.count : nil
     }
 }
