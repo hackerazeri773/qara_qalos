@@ -92,9 +92,7 @@ public enum SpeechPlanner {
 
         for segment in segments {
             if !segment.isCharacters {
-                // Azerbaycanca seste VoiceOver'in Ingilizce gonderdigi kendi sozleri (button, heading...)
-                let t = VoiceOverTerms.localize(segment.text, language: language)
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                let t = segment.text.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !t.isEmpty { add(t, characterMode: false) }
                 continue
             }

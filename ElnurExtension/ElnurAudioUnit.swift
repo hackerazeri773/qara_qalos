@@ -32,14 +32,23 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
             return catalog.voices.map { info in
                 let voice = AVSpeechSynthesisProviderVoice(name: info.displayName,
                                                            identifier: info.id,
-                                                           primaryLanguages: [info.language],
-                                                           supportedLanguages: [info.language])
+                                                           primaryLanguages: [Self.systemLanguage(info.language)],
+                                                           supportedLanguages: [Self.systemLanguage(info.language)])
                 voice.gender = info.gender == "male" ? .male : .female
                 voice.version = "6.15.5"
                 return voice
             }
         }
         set {}
+    }
+
+    /// iOS'ta Azerbaycanca arayuz yok: "az-AZ" sesleri listede "null" gorunuyor ve VoiceOver
+    /// kendi sozlerini (dugme, baslik...) Ingilizce okuyordu. Azerbaycanca sesler sisteme
+    /// "tr-AZ" (Turkce, Azerbaycan) olarak tanitilir: VoiceOver sozlerini Turkce okur ve bu dil
+    /// "Turkce (Turkiye)"den ayri oldugu icin rotorda ayri secilebilir. Motor yine sesin
+    /// gercek dilini (az) kullanir; sayi/emoji/sozluk kurallari degismez.
+    static func systemLanguage(_ language: String) -> String {
+        language.hasPrefix("az") ? "tr-AZ" : language
     }
 
     public override var outputBusses: AUAudioUnitBusArray { _outputBusses }
