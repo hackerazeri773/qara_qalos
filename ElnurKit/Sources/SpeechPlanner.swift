@@ -86,18 +86,19 @@ public enum SpeechPlanner {
 
     // VoiceOver (tr) buyuk "Ə" harfini taniyamiyor ve metnin icinde " schwa " olarak yaziyor:
     // "Əlavə" -> " schwa lavə", "ƏLAVƏ" -> " schwa LAV schwa ". Kucuk "ə" oldugu gibi geliyor.
+    // VoiceOver "schwa"yi kendi ekledigi bosluklarla yazar: metnin basinda " schwa ", ortada
+    // "  schwa " (asil bosluk + eklenen bosluk). Metindeki gercek "schwa" kelimesi (tek bosluk) korunur.
     private static let schwaBeforeWord = try! NSRegularExpression(
-        pattern: #"(?<![\p{L}\p{N}])schwa (?=\p{L})"#, options: [.caseInsensitive])
+        pattern: #"(^ |  )schwa (?=\p{L})"#, options: [.caseInsensitive])
     private static let schwaAfterWord = try! NSRegularExpression(
-        pattern: #"(?<=\p{L}) schwa(?![\p{L}\p{N}])"#, options: [.caseInsensitive])
+        pattern: #"(?<=\p{L}) schwa(?=  | ?$)"#, options: [.caseInsensitive])
 
     static func restoreCapitalSchwa(_ text: String, language: String) -> String {
         guard language.hasPrefix("az"), text.range(of: "schwa", options: .caseInsensitive) != nil else { return text }
-        var t = text
-        for re in [schwaBeforeWord, schwaAfterWord] {
-            t = re.stringByReplacingMatches(in: t, range: NSRange(location: 0, length: (t as NSString).length),
-                                            withTemplate: "Ə")
-        }
+        var t = schwaBeforeWord.stringByReplacingMatches(in: text, range: NSRange(location: 0, length: (text as NSString).length),
+                                                         withTemplate: "$1Ə")
+        t = schwaAfterWord.stringByReplacingMatches(in: t, range: NSRange(location: 0, length: (t as NSString).length),
+                                                    withTemplate: "Ə")
         return t
     }
 
