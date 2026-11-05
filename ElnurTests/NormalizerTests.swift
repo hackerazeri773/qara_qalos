@@ -106,4 +106,16 @@ final class NormalizerTests: XCTestCase {
         XCTAssertTrue(chosen.contains("Dimitry") && !chosen.contains("Svetlana"))
         ElnurSettings.setLanguage("ru", .default)
     }
+
+    func test0j_NoBroken16kVoiceInStdProfile() throws {
+        let engine = try ElnurEngine.shared()
+        for id in ["az.elnurtts.dimitry", "az.elnurtts.babek", "az.elnurtts.ahmet", "az.elnurtts.jenny", "az.elnurtts.svetlana"] {
+            guard let v = try? engine.voice(id: id) else { continue }
+            let p = engine.voiceProfile(for: v)
+            print("PROFIL \(id): \(p)")
+            XCTAssertFalse(p.split(separator: "+").dropFirst().contains { $0 == "Elnur" || $0 == "Faruk" }, p)
+        }
+        let elnur = try engine.voice(id: "az.elnurtts.elnur")
+        print("PROFIL elnur: \(engine.voiceProfile(for: elnur))")
+    }
 }

@@ -127,16 +127,22 @@ public final class ElnurEngine {
             seen.insert(lang)
             let setting = ElnurSettings.language(lang)
             guard setting.detect else { continue }
-            let chosen = catalog.voices.first { ($0.name == setting.voice || $0.displayName == setting.voice) && $0.language.hasPrefix(lang) }
-            names.append((chosen ?? defaultVoice(language: lang, like: voice))?.name ?? v.name)
+            // Ana ses 24 kHz ("std") motorda calisiyorsa 16 kHz'lik sesler (Elnur, Faruk) profile
+            // girmemeli: 24 kHz modelleri bozuk, cizirti cikariyor. Yerine ayni dilin ayni
+            // cinsiyetteki 24 kHz sesi gecer (Elnur -> Babek).
+            let usable: (ElnurVoiceInfo) -> Bool = { voice.quality == "min" || $0.quality != "min" }
+            let chosen = catalog.voices.first {
+                ($0.name == setting.voice || $0.displayName == setting.voice) && $0.language.hasPrefix(lang) && usable($0)
+            }
+            let preferredGender = catalog.voices.first {
+                ($0.name == setting.voice || $0.displayName == setting.voice) && $0.language.hasPrefix(lang)
+            }?.gender ?? voice.gender
+            let fallback = catalog.voices.first { $0.language.hasPrefix(lang) && usable($0) && $0.gender == preferredGender }
+                ?? catalog.voices.first { $0.language.hasPrefix(lang) && usable($0) }
+            guard let partner = chosen ?? fallback else { continue }
+            names.append(partner.name)
         }
         return names.joined(separator: "+")
-    }
-
-    /// Ayar yoksa: ayni cinsiyetten ilk ses (onceki davranis: Gulnar -> Svetlana, Babek -> Dimitry).
-    private func defaultVoice(language: String, like voice: ElnurVoiceInfo) -> ElnurVoiceInfo? {
-        let candidates = catalog.voices.filter { $0.language.hasPrefix(language) }
-        return candidates.first { $0.gender == voice.gender } ?? candidates.first
     }
 
     /// Modeli onceden yukler (ilk konusmadaki gecikmeyi azaltir).
