@@ -125,4 +125,16 @@ final class NormalizerTests: XCTestCase {
             XCTAssertLessThan(Double(jumps) / Double(x.count), 0.001, id)
         }
     }
+
+    func test0k_CapitalSchwaInText() {
+        func plan(_ t: String) -> String {
+            SpeechPlanner.plan(SpeechRequestText.parse(ssml: "<speak><lang xml:lang=\"tr\">\(t)</lang></speak>"),
+                               language: "az-AZ", engineCharacterMode: true).map(\.text).joined(separator: "|")
+        }
+        XCTAssertEqual(plan(" schwa lavə"), "Əlavə")
+        XCTAssertEqual(plan("Ayarlar sağ ok  schwa lçatımlılıq"), "Ayarlar sağ ox  Əlçatımlılıq")
+        XCTAssertEqual(plan(" schwa LAV schwa "), "ƏLAVƏ")
+        XCTAssertEqual(plan("əlavə"), "əlavə")
+        XCTAssertEqual(SpeechPlanner.restoreCapitalSchwa(" schwa lavə", language: "tr-TR"), " schwa lavə")
+    }
 }

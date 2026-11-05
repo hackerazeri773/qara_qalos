@@ -84,6 +84,23 @@ public enum SpeechPlanner {
         return chunks
     }
 
+    // VoiceOver (tr) buyuk "Ə" harfini taniyamiyor ve metnin icinde " schwa " olarak yaziyor:
+    // "Əlavə" -> " schwa lavə", "ƏLAVƏ" -> " schwa LAV schwa ". Kucuk "ə" oldugu gibi geliyor.
+    private static let schwaBeforeWord = try! NSRegularExpression(
+        pattern: #"(?<![\p{L}\p{N}])schwa (?=\p{L})"#, options: [.caseInsensitive])
+    private static let schwaAfterWord = try! NSRegularExpression(
+        pattern: #"(?<=\p{L}) schwa(?![\p{L}\p{N}])"#, options: [.caseInsensitive])
+
+    static func restoreCapitalSchwa(_ text: String, language: String) -> String {
+        guard language.hasPrefix("az"), text.range(of: "schwa", options: .caseInsensitive) != nil else { return text }
+        var t = text
+        for re in [schwaBeforeWord, schwaAfterWord] {
+            t = re.stringByReplacingMatches(in: t, range: NSRange(location: 0, length: (t as NSString).length),
+                                            withTemplate: "Ə")
+        }
+        return t
+    }
+
     static func unicodeLetterName(_ text: String) -> String? {
         var key = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard key.contains(" letter ") else { return nil }
@@ -136,8 +153,10 @@ public enum SpeechPlanner {
 
         for segment in segments {
             if !segment.isCharacters {
-                // Azerbaycanca seste VoiceOver'in Turkce noktalama/sembol adlari Azerbaycanca okunur.
-                let t = VoiceOverPunctuation.localize(segment.text, language: language)
+                // Azerbaycanca seste VoiceOver'in Turkce noktalama/sembol adlari Azerbaycanca okunur;
+                // kelime icindeki buyuk "Ə" yerine yazdigi "schwa" yeniden harfe cevrilir.
+                let t = VoiceOverPunctuation.localize(restoreCapitalSchwa(segment.text, language: language),
+                                                      language: language)
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 if !t.isEmpty { add(t, characterMode: false) }
                 continue
