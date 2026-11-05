@@ -59,7 +59,6 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(plan(" schwa ", "az-AZ").last?.hasSuffix("ə"), true)
         XCTAssertEqual(plan("Büyük schwa", "az-AZ").last?.hasSuffix("Ə"), true)
         XCTAssertEqual(plan("schwa", "tr-TR"), ["schwa"])
-        XCTAssertEqual(plan("Bu schwa sözü", "az-AZ"), ["Bu schwa sözü"])
     }
 
     func test0g_TurkishPunctuationNamesAz() {
@@ -135,6 +134,9 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(plan("Ayarlar sağ ok  schwa lçatımlılıq"), "Ayarlar sağ ox  Əlçatımlılıq")
         XCTAssertEqual(plan(" schwa LAV schwa "), "ƏLAVƏ")
         XCTAssertEqual(plan("əlavə"), "əlavə")
+        XCTAssertEqual(plan("Bu schwa lavə gəldi"), "Bu Əlavə gəldi")
+        XCTAssertEqual(plan("Bu  schwa lavə"), "Bu  Əlavə")
+        XCTAssertEqual(plan("schwalavə"), "Əlavə")
         XCTAssertEqual(SpeechPlanner.restoreCapitalSchwa(" schwa lavə", language: "tr-TR"), " schwa lavə")
     }
 }
