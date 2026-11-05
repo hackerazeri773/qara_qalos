@@ -77,4 +77,19 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(VoiceOverPunctuation.localize("noktalı yazı", language: az), "noktalı yazı")
         XCTAssertEqual(VoiceOverPunctuation.localize("virgül", language: "tr-TR"), "virgül")
     }
+
+    func test0h_UnicodeLetterNamesAndPitch() {
+        func plan(_ t: String) -> [String] {
+            SpeechPlanner.plan(SpeechRequestText.parse(ssml: "<speak><lang xml:lang=\"tr\">\(t)</lang></speak>"),
+                               language: "az-AZ", engineCharacterMode: true).map { ($0.useCharacterMode ? "K:" : "") + $0.text }
+        }
+        XCTAssertEqual(plan("cyrillic small letter be"), ["K:б"])
+        XCTAssertEqual(plan(" Cyrillic capital letter zhe "), ["K:Ж"])
+        XCTAssertEqual(plan("greek small letter alpha"), ["K:α"])
+        XCTAssertEqual(plan("Bir cyrillic small letter be yazdı").count, 1)
+        let p = SpeechRequestText.parse(ssml: "<speak><prosody pitch=\"-10.000004%\" rate=\"190%\">salam</prosody></speak>")
+        XCTAssertEqual(VoiceOverMapping.pitchMultiplier(for: p), 0.9, accuracy: 0.001)
+        let q = SpeechRequestText.parse(ssml: "<speak><prosody rate=\"190%\">salam</prosody></speak>")
+        XCTAssertEqual(VoiceOverMapping.pitchMultiplier(for: q), 1.0)
+    }
 }

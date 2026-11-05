@@ -41,6 +41,14 @@ struct ElnurApp: App {
                 return (samples, Double(engine.outputSampleRate))
             },
             prepare: { _ in _ = try? ElnurEngine.shared() },
-            creditsKey: "about.credits.elnurtts")
+            creditsKey: "about.credits.elnurtts",
+            secondaryVoice: SecondaryVoiceSetting(
+                options: [(value: String?, label: String)]([(value: nil, label: L("secondary.auto"))])
+                    + voices.filter { $0.language.hasPrefix("ru") }.map { v -> (value: String?, label: String) in
+                        (value: v.name, label: "\(v.name), \(L(v.gender == "male" ? "gender.male" : "gender.female"))")
+                    },
+                get: { ElnurSettings.russianPartner },
+                set: { ElnurSettings.russianPartner = $0 },
+                isShared: { ElnurSettings.isShared }))
     }()
 }

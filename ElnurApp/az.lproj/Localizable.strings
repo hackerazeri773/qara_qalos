@@ -26,3 +26,7 @@
 "lang.tr" = "Türk dili";
 "lang.ru" = "Rus dili";
 "lang.en" = "İngilis dili";
+"secondary.title" = "Rus mətnləri üçün səs";
+"secondary.footer" = "Azərbaycan və türk səsləri rus (kiril) mətnə rast gələndə avtomatik bu səsə keçir.";
+"secondary.auto" = "Avtomatik (eyni cins)";
+"secondary.unavailable" = "Bu quraşdırmada ayar VoiceOver-ə ötürülə bilmir, avtomatik seçim istifadə olunur.";

@@ -23,6 +23,18 @@ struct VoiceAppConfig {
     var prepare: ((_ voiceID: String) -> Void)? = nil
     /// "Hakkinda" ekranindaki emegi gecenler metninin anahtari (Localizable.strings).
     let creditsKey: String
+    /// Istege bagli: ikinci dil icin ses secimi (ElnurTTS: Rusca metinler).
+    var secondaryVoice: SecondaryVoiceSetting? = nil
+}
+
+/// Ana sesin baska bir dile rastladiginda gectigi ses (ornegin Rusca metinde Svetlana/Dimitry).
+struct SecondaryVoiceSetting {
+    /// nil = otomatik
+    let options: [(value: String?, label: String)]
+    let get: () -> String?
+    let set: (String?) -> Void
+    /// Ayar VoiceOver ses eklentisine ulasabiliyor mu (App Group)?
+    let isShared: () -> Bool
 }
 
 func L(_ key: String) -> String { NSLocalizedString(key, comment: "") }
@@ -51,6 +63,7 @@ struct VoiceAppView: View {
     @State private var text = ""
     @State private var rate = 1.0
     @State private var errorText = ""
+    @State private var secondaryChoice: String?
     @StateObject private var player = SamplePlayer()
 
     private var selected: VoiceItem? { config.voices.first { $0.id == selectedID } }
@@ -85,6 +98,9 @@ struct VoiceAppView: View {
                     }
                 }
 
+                if let setting = config.secondaryVoice {
+                    secondaryVoiceSection(setting)
+                }
                 tryItSection.id("try")
                 voiceOverSection.id("vo")
 
@@ -146,6 +162,30 @@ struct VoiceAppView: View {
         .accessibilityLabel("\(voice.name), \(L(voice.gender == "male" ? "gender.male" : "gender.female"))")
         .accessibilityHint(L("voice.hint"))
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+    }
+
+    private func secondaryVoiceSection(_ setting: SecondaryVoiceSetting) -> some View {
+        Section {
+            Picker(L("secondary.title"), selection: Binding(
+                get: { secondaryChoice ?? setting.get() ?? "" },
+                set: { value in
+                    secondaryChoice = value
+                    setting.set(value.isEmpty ? nil : value)
+                })) {
+                ForEach(setting.options.indices, id: \.self) { i in
+                    Text(setting.options[i].label).tag(setting.options[i].value ?? "")
+                }
+            }
+        } header: {
+            Text(L("secondary.title"))
+        } footer: {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(L("secondary.footer"))
+                if !setting.isShared() {
+                    Text(L("secondary.unavailable")).foregroundStyle(.orange)
+                }
+            }
+        }
     }
 
     private var tryItSection: some View {

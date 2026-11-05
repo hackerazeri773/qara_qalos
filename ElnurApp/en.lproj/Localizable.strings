@@ -26,3 +26,7 @@
 "lang.tr" = "Turkish";
 "lang.ru" = "Russian";
 "lang.en" = "English";
+"secondary.title" = "Voice for Russian text";
+"secondary.footer" = "Azerbaijani and Turkish voices switch to this voice automatically when they meet Russian (Cyrillic) text.";
+"secondary.auto" = "Automatic (same gender)";
+"secondary.unavailable" = "This installation cannot pass the setting to VoiceOver, so the automatic choice is used.";

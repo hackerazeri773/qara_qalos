@@ -84,6 +84,13 @@ public enum SpeechPlanner {
         return chunks
     }
 
+    static func unicodeLetterName(_ text: String) -> String? {
+        var key = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard key.contains(" letter ") else { return nil }
+        for prefix in ["büyük ", "böyük "] where key.hasPrefix(prefix) { key.removeFirst(prefix.count) }
+        return UnicodeLetterNames.table[key]
+    }
+
     static func isEmoji(_ c: Character) -> Bool {
         c.unicodeScalars.contains { $0.properties.isEmojiPresentation || $0.value >= 0x1F000 }
     }
@@ -106,6 +113,11 @@ public enum SpeechPlanner {
         // "ə" harfini klavyede Ingilizce Unicode adiyla ("schwa") gonderiyor. Harfin kendisi okunur.
         if language.hasPrefix("az"), let schwa = schwaKey(request.text) {
             return schwa
+        }
+        // VoiceOver'in tanimadigi harfler Ingilizce Unicode adiyla geliyor ("cyrillic small letter be"):
+        // harfin kendisi okunur (Kiril harfini motorun Rusca sesi okur).
+        if let letter = unicodeLetterName(request.text) {
+            return [SpeechChunk(text: letter, useCharacterMode: true)]
         }
         // Tek karakterlik istek (ör. yazarken harf yankısı) da harf harf okunur.
         let trimmed = request.text.trimmingCharacters(in: .whitespacesAndNewlines)

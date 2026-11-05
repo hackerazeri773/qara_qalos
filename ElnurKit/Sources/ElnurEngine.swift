@@ -120,7 +120,9 @@ public final class ElnurEngine {
     func voiceProfile(for voice: ElnurVoiceInfo) -> String {
         let lang = voice.language.prefix(2)
         guard lang == "az" || lang == "tr" else { return voice.name }
-        let partner = voice.gender == "male" ? "Dimitry" : "Svetlana"
+        let automatic = voice.gender == "male" ? "Dimitry" : "Svetlana"
+        let chosen = ElnurSettings.russianPartner
+        let partner = (chosen == "Dimitry" || chosen == "Svetlana") ? chosen! : automatic
         guard catalog.voices.contains(where: { $0.name == partner }) else { return voice.name }
         return voice.name + "+" + partner
     }

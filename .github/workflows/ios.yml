@@ -134,6 +134,13 @@ jobs:
             2>&1 | tail -30
           mkdir -p Payload ipa
           cp -R dd-device/Build/Products/Release-iphoneos/ElnurTTS.app Payload/
+          # App Group (uygulama ayarlari ses eklentisine ulassin) yetkisini gecici imzayla gom;
+          # Sideloadly yeniden imzalarken bu yetkileri okur.
+          A=Payload/ElnurTTS.app
+          for f in "$A"/Frameworks/*; do codesign -f -s - "$f"; done
+          for x in "$A"/PlugIns/*.appex; do codesign -f -s - --entitlements ci/ext.entitlements "$x"; done
+          codesign -f -s - --entitlements ci/app.entitlements "$A"
+          codesign -d --entitlements :- "$A" 2>/dev/null | head -20 || true
           zip -qry ipa/ElnurTTS-unsigned.ipa Payload
           ls -la ipa
 

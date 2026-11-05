@@ -18,11 +18,15 @@ public enum VoiceOverMapping {
         return min(maxRate, max(minRate, request.rate))
     }
 
-    /// VoiceOver'in perde degeri motora uygulanmaz: HTS/MAGE vokoderinde perde
-    /// degisikligi surtunmeli seslerde ("s", "ş") bozulmaya yol aciyor.
-    /// (RHVoiceUkraine projesi de ayni karari vermis.)
+    public static let minPitch = 0.5
+    public static let maxPitch = 2.0
+
+    /// VoiceOver perdeyi goreli yuzde olarak gonderir (pitch="-10%" -> 0.9). Perde motorun
+    /// kendi perde ayariyla uygulanir (RHVoice: relative_pitch; ESVoice: modelin pitch_add girisi);
+    /// sesi bozmaz (olculdu: f0 0.7x/1.4x, surtunmeli seslerde degisiklik yok).
     public static func pitchMultiplier(for request: SpeechRequestText) -> Double {
-        1.0
+        guard request.rawPitch != nil else { return 1 }
+        return min(maxPitch, max(minPitch, request.pitch))
     }
 
     /// Ses seviyesi hicbir zaman 1'in ustune cikarilmaz; yukseltmeyi VoiceOver yapar.

@@ -26,3 +26,7 @@
 "lang.tr" = "Türkçe";
 "lang.ru" = "Rusça";
 "lang.en" = "İngilizce";
+"secondary.title" = "Rusça metinler için ses";
+"secondary.footer" = "Azerbaycan ve Türk sesleri Rusça (Kiril) metne geldiğinde otomatik olarak bu sese geçer.";
+"secondary.auto" = "Otomatik (aynı cinsiyet)";
+"secondary.unavailable" = "Bu kurulumda ayar VoiceOver'a aktarılamıyor, otomatik seçim kullanılır.";
