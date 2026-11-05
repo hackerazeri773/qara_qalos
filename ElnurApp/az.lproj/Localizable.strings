@@ -27,7 +27,7 @@
 "lang.ru" = "Rus dili";
 "lang.en" = "İngilis dili";
 
-"app.subtitle.elnur" = "VoiceOver və mətni oxuyan bütün tətbiqlər üçün təbii səslər. Android-dəki ElnurTTS kimi, hər dilin öz varsayılan səsi, səs ucalığı və sürəti var.";
+"app.subtitle.elnur" = "ElnurTTS səsləri artıq iPhone'unuzda. VoiceOver və ya hər hansı bir ekran oxuyucuyla istifadə edilə bilər.\nAşağıdakı səslərdən hər hansı birini rotora əlavə edin və VoiceOver'da varsayılan səs olaraq seçin. Ətraflı öyrənmək üçün Haqqında bölümünə baxın.";
 "settings.unavailable" = "Bu ayarlar hazırda yalnız tətbiqin içində işləyir. VoiceOver-in onlardan istifadə etməsi üçün ElnurTTS ödənişli Apple developer hesabı ilə quraşdırılmalıdır.";
 "lang.voice" = "Varsayılan səs";
 "lang.sample" = "Nümunəni dinlə";
@@ -37,3 +37,15 @@
 "lang.rate" = "Səs sürəti";
 "lang.footer" = "Başqa bir səs bu dildə mətnə rast gələndə bu səsə keçir. Səs ucalığı və sürət VoiceOver ayarlarının üzərinə əlavə olunur.";
 "try.voice" = "Səs";
+"about.vo.title" = "VoiceOver-də səsi seçmək";
+"about.vo.1" = "Ayarlar → Əlçatımlılıq → VoiceOver → Nitq → Səs bölməsini açın (Settings → Accessibility → VoiceOver → Speech → Voice).";
+"about.vo.2" = "Dili seçin və ElnurTTS səslərindən birini seçin. Azərbaycan səsləri “Türkçe (Azerbaycan)”, türk səsləri “Türkçe (Türkiye)”, rus səsləri “Русский” adı altındadır.";
+"about.rotor.title" = "Səsləri rotora əlavə etmək";
+"about.rotor.1" = "Eyni Nitq menyusunda “Rotor dilləri” (Rotor Languages) bölməsində “Yeni dil əlavə et” düyməsinə toxunun.";
+"about.rotor.2" = "Dili seçin, sonra həmin dil üçün istədiyiniz ElnurTTS səsini seçin. Bir neçə dil əlavə edə bilərsiniz.";
+"about.rotor.3" = "VoiceOver → Rotor bölməsində “Dillər” elementinin işarələndiyinə əmin olun. Sonra rotoru “Dillər”ə çevirib bir barmaqla yuxarı və ya aşağı sürüşdürərək səslər arasında keçin.";
+"about.spoken.title" = "Seçiləni və ekranı səsləndirmək";
+"about.spoken.1" = "Seçiləni səsləndir və Ekranı səsləndir üçün: Ayarlar → Əlçatımlılıq → Səsləndirilən məzmun → Səslər (Settings → Accessibility → Spoken Content → Voices).";
+"about.lang.title" = "Dil ayarları";
+"about.lang.text" = "Hər dilin varsayılan səsi başqa bir səs həmin dildə mətnə rast gələndə istifadə olunur. Məsələn, Gulnar rus mətninə çatanda Rus dilinin varsayılan səsinə keçir. “Dili müəyyənləşdir” söndürülsə, bu dilə keçid olmur. Səs ucalığı və sürəti VoiceOver ayarlarının üzərinə əlavə olunur.";
+"about.missing.title" = "Səslər görünmürsə";

@@ -66,11 +66,10 @@ struct ElnurAppView: View {
                     }
 
                     tryItSection.id("try")
-                    voiceOverSection.id("vo")
 
                     Section {
                         NavigationLink {
-                            AboutView(config: config)
+                            ElnurAboutView(voiceCount: voices.count)
                         } label: {
                             Label(L("about.title"), systemImage: "info.circle")
                         }
@@ -141,8 +140,6 @@ struct ElnurAppView: View {
                       text: "\(Int(b.wrappedValue.ratePercent))%")
         } header: {
             Text(VoiceAppView.languageName(lang))
-        } footer: {
-            Text(L("lang.footer"))
         }
     }
 
@@ -212,33 +209,6 @@ struct ElnurAppView: View {
         }
     }
 
-    private var voiceOverSection: some View {
-        Section {
-            step(1, L("vo.step1"))
-            step(2, String(format: L("vo.step2"), config.appName))
-            step(3, L("vo.step3"))
-            step(4, L("vo.step4"))
-        } header: {
-            Text(L("vo.title"))
-        } footer: {
-            Text(L("vo.footer"))
-        }
-    }
-
-    private func step(_ n: Int, _ text: String) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text("\(n)")
-                .font(.footnote.bold())
-                .foregroundStyle(.white)
-                .frame(width: 22, height: 22)
-                .background(Circle().fill(Color.accentColor))
-                .accessibilityHidden(true)
-            Text(text).font(.subheadline)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(n). \(text)")
-    }
-
     // MARK: - Islemler
 
     private func isPlaying(_ id: String) -> Bool {
@@ -279,5 +249,64 @@ struct ElnurAppView: View {
     static func dbText(_ db: Double) -> String {
         let v = Int(db.rounded())
         return (v > 0 ? "+" : "") + "\(v) dB"
+    }
+}
+
+/// Haqqinda: kullanim bilgisi (VoiceOver, rotor, Seslendirilen Icerik, dil ayarlari).
+struct ElnurAboutView: View {
+    let voiceCount: Int
+
+    private var version: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "-"
+    }
+
+    var body: some View {
+        List {
+            Section {
+                LabeledContent(L("about.version"), value: version)
+                LabeledContent(L("about.voices"), value: "\(voiceCount)")
+            }
+            Section(L("about.vo.title")) {
+                step(1, L("about.vo.1"))
+                step(2, L("about.vo.2"))
+            }
+            Section(L("about.rotor.title")) {
+                step(1, L("about.rotor.1"))
+                step(2, L("about.rotor.2"))
+                step(3, L("about.rotor.3"))
+            }
+            Section(L("about.spoken.title")) {
+                Text(L("about.spoken.1")).font(.subheadline)
+            }
+            Section(L("about.lang.title")) {
+                Text(L("about.lang.text")).font(.subheadline)
+            }
+            Section(L("about.missing.title")) {
+                Text(L("vo.footer")).font(.subheadline)
+            }
+            Section {
+                Label {
+                    Text(L("about.offline"))
+                } icon: {
+                    Image(systemName: "lock.shield").foregroundStyle(.tint)
+                }
+            }
+        }
+        .navigationTitle(L("about.title"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func step(_ n: Int, _ text: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text("\(n)")
+                .font(.footnote.bold())
+                .foregroundStyle(.white)
+                .frame(width: 22, height: 22)
+                .background(Circle().fill(Color.accentColor))
+                .accessibilityHidden(true)
+            Text(text).font(.subheadline)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(n). \(text)")
     }
 }

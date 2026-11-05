@@ -8,7 +8,9 @@ import ElnurKit
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        application.accessibilityLanguage = Locale.preferredLanguages.first ?? "en"
+        // Test asamasinda arayuz yalnizca Azerbaycanca: VoiceOver onu Azerbaycanca sesle
+        // ("Türkçe (Azerbaycan)" = tr-AZ altinda secilen ElnurTTS sesi) okusun.
+        application.accessibilityLanguage = "tr-AZ"
         return true
     }
 }
