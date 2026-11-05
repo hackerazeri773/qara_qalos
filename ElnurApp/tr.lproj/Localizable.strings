@@ -26,7 +26,14 @@
 "lang.tr" = "Türkçe";
 "lang.ru" = "Rusça";
 "lang.en" = "İngilizce";
-"secondary.title" = "Rusça metinler için ses";
-"secondary.footer" = "Azerbaycan ve Türk sesleri Rusça (Kiril) metne geldiğinde otomatik olarak bu sese geçer.";
-"secondary.auto" = "Otomatik (aynı cinsiyet)";
-"secondary.unavailable" = "Bu kurulumda ayar VoiceOver'a aktarılamıyor, otomatik seçim kullanılır.";
+
+"app.subtitle.elnur" = "VoiceOver ve metni sesli okuyan tüm uygulamalar için doğal sesler. Android'deki ElnurTTS gibi her dilin kendi varsayılan sesi, ses yüksekliği ve hızı var.";
+"settings.unavailable" = "Bu ayarlar şu anda yalnızca uygulama içinde geçerli. VoiceOver'ın bunları kullanması için ElnurTTS'nin ücretli Apple geliştirici hesabıyla kurulması gerekir.";
+"lang.voice" = "Varsayılan ses";
+"lang.sample" = "Örneği dinle";
+"lang.detect.title" = "Dil algılama";
+"lang.detect.desc" = "Otomatik dil geçişi";
+"lang.volume" = "Ses yüksekliği";
+"lang.rate" = "Konuşma hızı";
+"lang.footer" = "Başka bir ses bu dilde metne geldiğinde bu sese geçer. Ses yüksekliği ve hız, VoiceOver ayarlarının üzerine eklenir.";
+"try.voice" = "Ses";

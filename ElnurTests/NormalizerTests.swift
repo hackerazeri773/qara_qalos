@@ -1,5 +1,5 @@
 import XCTest
-import ElnurKit
+@testable import ElnurKit
 
 /// Android TextNormalizer.kt ile ayni sonuclari vermeli.
 final class NormalizerTests: XCTestCase {
@@ -91,5 +91,19 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(VoiceOverMapping.pitchMultiplier(for: p), 0.9, accuracy: 0.001)
         let q = SpeechRequestText.parse(ssml: "<speak><prosody rate=\"190%\">salam</prosody></speak>")
         XCTAssertEqual(VoiceOverMapping.pitchMultiplier(for: q), 1.0)
+    }
+
+    func test0i_AndroidStyleProfile() throws {
+        let engine = try ElnurEngine.shared()
+        let gulnar = try engine.voice(id: "az.elnurtts.gulnar")
+        let auto = engine.voiceProfile(for: gulnar)
+        print("PROFIL varsayilan: \(auto)")
+        XCTAssertTrue(auto.hasPrefix("Gulnar+"))
+        XCTAssertTrue(auto.contains("Svetlana"))
+        var ru = ElnurSettings.language("ru"); ru.voice = "Dimitry"; ElnurSettings.setLanguage("ru", ru)
+        let chosen = engine.voiceProfile(for: gulnar)
+        print("PROFIL Dimitry secili: \(chosen)")
+        XCTAssertTrue(chosen.contains("Dimitry") && !chosen.contains("Svetlana"))
+        ElnurSettings.setLanguage("ru", .default)
     }
 }

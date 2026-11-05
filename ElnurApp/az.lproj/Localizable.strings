@@ -26,7 +26,14 @@
 "lang.tr" = "Türk dili";
 "lang.ru" = "Rus dili";
 "lang.en" = "İngilis dili";
-"secondary.title" = "Rus mətnləri üçün səs";
-"secondary.footer" = "Azərbaycan və türk səsləri rus (kiril) mətnə rast gələndə avtomatik bu səsə keçir.";
-"secondary.auto" = "Avtomatik (eyni cins)";
-"secondary.unavailable" = "Bu quraşdırmada ayar VoiceOver-ə ötürülə bilmir, avtomatik seçim istifadə olunur.";
+
+"app.subtitle.elnur" = "VoiceOver və mətni oxuyan bütün tətbiqlər üçün təbii səslər. Android-dəki ElnurTTS kimi, hər dilin öz varsayılan səsi, səs ucalığı və sürəti var.";
+"settings.unavailable" = "Bu ayarlar hazırda yalnız tətbiqin içində işləyir. VoiceOver-in onlardan istifadə etməsi üçün ElnurTTS ödənişli Apple developer hesabı ilə quraşdırılmalıdır.";
+"lang.voice" = "Varsayılan səs";
+"lang.sample" = "Nümunəni dinlə";
+"lang.detect.title" = "Dili müəyyənləşdir";
+"lang.detect.desc" = "Avtomatik dil keçidi";
+"lang.volume" = "Səs ucalığı";
+"lang.rate" = "Səs sürəti";
+"lang.footer" = "Başqa bir səs bu dildə mətnə rast gələndə bu səsə keçir. Səs ucalığı və sürət VoiceOver ayarlarının üzərinə əlavə olunur.";
+"try.voice" = "Səs";

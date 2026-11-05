@@ -26,7 +26,14 @@
 "lang.tr" = "Turkish";
 "lang.ru" = "Russian";
 "lang.en" = "English";
-"secondary.title" = "Voice for Russian text";
-"secondary.footer" = "Azerbaijani and Turkish voices switch to this voice automatically when they meet Russian (Cyrillic) text.";
-"secondary.auto" = "Automatic (same gender)";
-"secondary.unavailable" = "This installation cannot pass the setting to VoiceOver, so the automatic choice is used.";
+
+"app.subtitle.elnur" = "Natural voices for VoiceOver and every app that reads text aloud. Each language has its own default voice, volume and rate, just like ElnurTTS on Android.";
+"settings.unavailable" = "These settings currently apply only inside the app. VoiceOver can use them only when ElnurTTS is installed with a paid Apple developer account.";
+"lang.voice" = "Default voice";
+"lang.sample" = "Listen to a sample";
+"lang.detect.title" = "Language detection";
+"lang.detect.desc" = "Automatic language switching";
+"lang.volume" = "Speech volume";
+"lang.rate" = "Speech rate";
+"lang.footer" = "When another voice meets text in this language, it switches to this voice. Volume and rate are added on top of the VoiceOver settings.";
+"try.voice" = "Voice";

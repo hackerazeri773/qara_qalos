@@ -114,17 +114,29 @@ public final class ElnurEngine {
         return created
     }
 
-    /// Azerice/Turkce seslerde Kiril harfli bolumleri Rusca ses okur (RHVoice ses
-    /// profili: "Gulnar+Svetlana"). Ayni yazi sistemi oldugu icin Latin harfli
-    /// Ingilizce kelimeler yine ana sesle okunur.
+    /// Android surumuyle ayni ses profili: ana ses + otomatik dil gecisi acik olan DIGER dillerin
+    /// varsayilan sesleri ("Gulnar+Dimitry+Jenny"). RHVoice her harfi profilde onu taniyan ILK
+    /// sese verir: Latin harfler ana seste kalir, Kiril harfli bolumleri Rusca ses okur.
     func voiceProfile(for voice: ElnurVoiceInfo) -> String {
-        let lang = voice.language.prefix(2)
-        guard lang == "az" || lang == "tr" else { return voice.name }
-        let automatic = voice.gender == "male" ? "Dimitry" : "Svetlana"
-        let chosen = ElnurSettings.russianPartner
-        let partner = (chosen == "Dimitry" || chosen == "Svetlana") ? chosen! : automatic
-        guard catalog.voices.contains(where: { $0.name == partner }) else { return voice.name }
-        return voice.name + "+" + partner
+        let mainLang = String(voice.language.prefix(2))
+        var names = [voice.name]
+        var seen: Set<String> = [mainLang]
+        for v in catalog.voices {
+            let lang = String(v.language.prefix(2))
+            guard !seen.contains(lang) else { continue }
+            seen.insert(lang)
+            let setting = ElnurSettings.language(lang)
+            guard setting.detect else { continue }
+            let chosen = catalog.voices.first { ($0.name == setting.voice || $0.displayName == setting.voice) && $0.language.hasPrefix(lang) }
+            names.append((chosen ?? defaultVoice(language: lang, like: voice))?.name ?? v.name)
+        }
+        return names.joined(separator: "+")
+    }
+
+    /// Ayar yoksa: ayni cinsiyetten ilk ses (onceki davranis: Gulnar -> Svetlana, Babek -> Dimitry).
+    private func defaultVoice(language: String, like voice: ElnurVoiceInfo) -> ElnurVoiceInfo? {
+        let candidates = catalog.voices.filter { $0.language.hasPrefix(language) }
+        return candidates.first { $0.gender == voice.gender } ?? candidates.first
     }
 
     /// Modeli onceden yukler (ilk konusmadaki gecikmeyi azaltir).
@@ -163,9 +175,11 @@ public final class ElnurEngine {
         synth.absolute_rate = 0
         synth.absolute_pitch = 0
         synth.absolute_volume = 0
-        synth.relative_rate = max(0.1, rate)
+        // Dilin kendi ayarlari (Android: language.X.volume / rate) VoiceOver degerlerinin ustune eklenir.
+        let langSetting = ElnurSettings.language(String(voice.language.prefix(2)))
+        synth.relative_rate = max(0.1, rate * langSetting.rateMultiplier)
         synth.relative_pitch = max(0.1, pitch)
-        synth.relative_volume = max(0.0, volume)
+        synth.relative_volume = max(0.0, volume * langSetting.volumeMultiplier)
         synth.punctuation_mode = ElnurTTS_punctuation_default
         synth.punctuation_list = nil
         synth.capitals_mode = ElnurTTS_capitals_default
