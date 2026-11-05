@@ -27,6 +27,21 @@ namespace ElnurTTS
   {
   }
 
+  // iPhone (ElnurTTS): yalnizca 16 kHz modeli olan sesler (Elnur, Faruk; 24 kHz modelleri
+  // bozuk oldugu icin cikarildi) 24 kHz istendiginde kendi 16 kHz modeliyle konusur.
+  // Boylece 24 kHz bir sesin profilinde de kullanilabilirler; ses hizi istemciye cumle
+  // basina bildirilir (set_sample_rate) ve istemci yeniden ornekler.
+  quality_t hts_engine_pool::effective_quality(quality_t quality) const
+  {
+    if(quality>=quality_std&&info.get_format()!=3)
+      {
+        const std::string& d=info.get_data_path();
+        if(!path::isdir(path::join(d,"24000"))&&path::isdir(path::join(d,"16000")))
+          return quality_min;
+      }
+    return quality;
+  }
+
   bool voice::synthesize(const utterance& u,client& c) const
   {
     hts_engine_call call(engine_pool,u,c);

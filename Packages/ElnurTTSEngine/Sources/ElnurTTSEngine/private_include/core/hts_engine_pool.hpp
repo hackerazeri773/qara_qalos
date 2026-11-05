@@ -44,8 +44,15 @@ namespace ElnurTTS
 #endif
     }
 
-    hts_engine_impl::pointer acquire(quality_t quality)
+    // iPhone (ElnurTTS): yalnizca 16 kHz modeli olan sesler (Elnur, Faruk; 24 kHz modelleri
+    // bozuk oldugu icin cikarildi) 24 kHz istendiginde kendi 16 kHz modeliyle konusur.
+    // Boylece 24 kHz bir sesin profilinde de kullanilabilirler; ses hizi istemciye
+    // cumle basina bildirilir (set_sample_rate) ve istemci yeniden ornekler.
+    quality_t effective_quality(quality_t quality) const; // core/voice.cpp
+
+    hts_engine_impl::pointer acquire(quality_t requested)
     {
+      quality_t quality=effective_quality(requested);
       hts_engine_impl::pointer result(get_instance(quality));
       if(! result)
         result=get_prototype(quality)->create(quality);

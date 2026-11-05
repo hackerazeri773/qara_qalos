@@ -7,7 +7,7 @@
       "displayName": "Elnur",
       "language": "az-AZ",
       "gender": "male",
-      "quality": "min"
+      "quality": "std"
     },
     {
       "id": "az.elnurtts.gulnar",
@@ -63,7 +63,7 @@
       "displayName": "Faruk",
       "language": "tr-TR",
       "gender": "male",
-      "quality": "min"
+      "quality": "std"
     },
     {
       "id": "az.elnurtts.filiz_kompak",

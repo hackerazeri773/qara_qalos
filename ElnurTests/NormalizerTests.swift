@@ -107,15 +107,22 @@ final class NormalizerTests: XCTestCase {
         ElnurSettings.setLanguage("ru", .default)
     }
 
-    func test0j_NoBroken16kVoiceInStdProfile() throws {
+    /// Dimitry + Elnur profili: Latin bolumleri Elnur kendi 16 kHz modeliyle okur, cizirti olmamali.
+    func test0j_MixedSampleRateProfileIsClean() throws {
         let engine = try ElnurEngine.shared()
-        for id in ["az.elnurtts.dimitry", "az.elnurtts.babek", "az.elnurtts.ahmet", "az.elnurtts.jenny", "az.elnurtts.svetlana"] {
-            guard let v = try? engine.voice(id: id) else { continue }
-            let p = engine.voiceProfile(for: v)
-            print("PROFIL \(id): \(p)")
-            XCTAssertFalse(p.split(separator: "+").dropFirst().contains { $0 == "Elnur" || $0 == "Faruk" }, p)
+        var az = ElnurSettings.language("az"); az.voice = "Elnur"; ElnurSettings.setLanguage("az", az)
+        defer { ElnurSettings.setLanguage("az", .default) }
+        let dimitry = try engine.voice(id: "az.elnurtts.dimitry")
+        let profile = engine.voiceProfile(for: dimitry)
+        print("PROFIL dimitry: \(profile)")
+        XCTAssertTrue(profile.contains("Elnur"))
+        for id in ["az.elnurtts.dimitry", "az.elnurtts.elnur", "az.elnurtts.faruk"] {
+            let x = try engine.synthesize(text: "Salam, Elnur danışır. Привет, это тест. Ayarlar ElnurTTS, səs.", voiceID: id)
+            var jumps = 0
+            for i in 1..<x.count where abs(x[i] - x[i - 1]) > 0.3 { jumps += 1 }
+            print("KARISIK \(id): \(x.count) ornek, \(jumps) sicrama")
+            XCTAssertGreaterThan(x.count, 48_000)
+            XCTAssertLessThan(Double(jumps) / Double(x.count), 0.001, id)
         }
-        let elnur = try engine.voice(id: "az.elnurtts.elnur")
-        print("PROFIL elnur: \(engine.voiceProfile(for: elnur))")
     }
 }

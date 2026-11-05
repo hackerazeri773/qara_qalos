@@ -127,18 +127,13 @@ public final class ElnurEngine {
             seen.insert(lang)
             let setting = ElnurSettings.language(lang)
             guard setting.detect else { continue }
-            // Ana ses 24 kHz ("std") motorda calisiyorsa 16 kHz'lik sesler (Elnur, Faruk) profile
-            // girmemeli: 24 kHz modelleri bozuk, cizirti cikariyor. Yerine ayni dilin ayni
-            // cinsiyetteki 24 kHz sesi gecer (Elnur -> Babek).
-            let usable: (ElnurVoiceInfo) -> Bool = { voice.quality == "min" || $0.quality != "min" }
+            // Elnur ve Faruk'un yalnizca 16 kHz modeli var; motor onlari 24 kHz profilde de kendi
+            // 16 kHz modeliyle okutur (hts_engine_pool::effective_quality).
             let chosen = catalog.voices.first {
-                ($0.name == setting.voice || $0.displayName == setting.voice) && $0.language.hasPrefix(lang) && usable($0)
-            }
-            let preferredGender = catalog.voices.first {
                 ($0.name == setting.voice || $0.displayName == setting.voice) && $0.language.hasPrefix(lang)
-            }?.gender ?? voice.gender
-            let fallback = catalog.voices.first { $0.language.hasPrefix(lang) && usable($0) && $0.gender == preferredGender }
-                ?? catalog.voices.first { $0.language.hasPrefix(lang) && usable($0) }
+            }
+            let fallback = catalog.voices.first { $0.language.hasPrefix(lang) && $0.gender == voice.gender }
+                ?? catalog.voices.first { $0.language.hasPrefix(lang) }
             guard let partner = chosen ?? fallback else { continue }
             names.append(partner.name)
         }
@@ -220,7 +215,15 @@ public final class ElnurEngine {
 
 /// Motorun geri cagirmalarindan gelen ornekleri toplar ve gerekirse hiz donusturur.
 final class SynthesisSink {
-    var sampleRate: Int = 0
+    /// Motor ses hizini cumle basina bildirir: Elnur/Faruk (yalnizca 16 kHz modeli var) ayni
+    /// metinde 24 kHz seslerle karisabilir. Hiz degisince eski yeniden ornekleyici bosaltilir.
+    var sampleRate: Int = 0 {
+        didSet {
+            guard oldValue != sampleRate, let r = resampler else { return }
+            emit(r.process([], final: true))
+            resampler = nil
+        }
+    }
     private let outputRate: Int
     private let onChunk: (([Float]) -> Void)?
     private let shouldContinue: (() -> Bool)?
