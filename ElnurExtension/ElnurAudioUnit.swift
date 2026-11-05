@@ -63,6 +63,9 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         let token = stream.begin()
         let ssml = speechRequest.ssmlRepresentation
         let request = SpeechRequestText.parse(ssml: ssml)
+        // GECICI TANI: VoiceOver'in gonderdigi metin sistem kaydina (idevicesyslog ile "VOREQ").
+        let codes = request.text.unicodeScalars.prefix(60).map { String(format: "%04X", $0.value) }.joined(separator: " ")
+        Self.log.notice("VOREQ ElnurTTS voice=\(speechRequest.voice.identifier, privacy: .public) text=[\(request.text, privacy: .public)] codes=[\(codes, privacy: .public)] ssml=\(ssml.replacingOccurrences(of: "\n", with: " "), privacy: .public)")
         let voiceID = speechRequest.voice.identifier
         let rate = VoiceOverMapping.rateMultiplier(for: request)
         let pitch = VoiceOverMapping.pitchMultiplier(for: request)
