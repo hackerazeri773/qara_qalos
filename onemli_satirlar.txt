@@ -1,0 +1,51 @@
+2044:Test Suite 'All tests' started at 2026-11-07 10:10:55.337.
+2045:Test Suite 'ElnurTests.xctest' started at 2026-11-07 10:10:55.338.
+2046:Test Suite 'ElnurTests' started at 2026-11-07 10:10:55.338.
+2047:Test Case '-[ElnurTests.ElnurTests test1_EngineSeesAllVoices]' started.
+2048:MOTOR SESLERI: ["Ahmet", "Babek", "Banu", "Dimitry", "Elnur", "Emel", "Fahrettin", "Faruk", "Filiz_kompak", "Gulnar", "Jenny", "Svetlana"]
+2049:Test Case '-[ElnurTests.ElnurTests test1_EngineSeesAllVoices]' passed (0.120 seconds).
+2050:Test Case '-[ElnurTests.ElnurTests test2_SynthesizeAllVoices]' started.
+2051:SENTEZ Elnur | 5.48 sn ses (ref 5.50) | rms 0.0955 (ref 0.0954) | 0.53 sn islem
+2052:SENTEZ Gulnar | 6.50 sn ses (ref 6.50) | rms 0.0940 (ref 0.0940) | 0.59 sn islem
+2053:SENTEZ Banu | 5.46 sn ses (ref 5.46) | rms 0.0913 (ref 0.0913) | 0.66 sn islem
+2054:SENTEZ Babek | 5.18 sn ses (ref 5.18) | rms 0.0998 (ref 0.0998) | 0.57 sn islem
+2055:SENTEZ Ahmet | 5.41 sn ses (ref 5.42) | rms 0.0844 (ref 0.0844) | 0.59 sn islem
+2056:SENTEZ Fahrettin | 5.01 sn ses (ref 5.01) | rms 0.0883 (ref 0.0883) | 0.48 sn islem
+2057:SENTEZ Emel | 5.07 sn ses (ref 5.07) | rms 0.0992 (ref 0.0992) | 0.48 sn islem
+2058:SENTEZ Faruk | 5.78 sn ses (ref 5.79) | rms 0.0829 (ref 0.0828) | 0.47 sn islem
+2059:SENTEZ Filiz_kompak | 5.09 sn ses (ref 5.09) | rms 0.0916 (ref 0.0916) | 0.45 sn islem
+2060:SENTEZ Svetlana | 3.16 sn ses (ref 3.17) | rms 0.1031 (ref 0.1030) | 0.45 sn islem
+2061:SENTEZ Dimitry | 3.25 sn ses (ref 3.25) | rms 0.0890 (ref 0.0890) | 0.38 sn islem
+2062:SENTEZ Jenny | 1.92 sn ses (ref 1.93) | rms 0.0858 (ref 0.0858) | 0.37 sn islem
+2063:Test Case '-[ElnurTests.ElnurTests test2_SynthesizeAllVoices]' passed (7.011 seconds).
+2064:Test Case '-[ElnurTests.ElnurTests test3_RateChangesDuration]' started.
+2065:HIZ normal=189474 3x=62936 5x=37508
+2066:Test Case '-[ElnurTests.ElnurTests test3_RateChangesDuration]' passed (0.830 seconds).
+2067:Test Case '-[ElnurTests.ElnurTests test4_SystemSeesExtension]' started.
+2113:SISTEM SESLERI: []
+2115:Test Case '-[ElnurTests.ElnurTests test4_SystemSeesExtension]' skipped (30.674 seconds).
+2116:Test Suite 'ElnurTests' passed at 2026-11-07 10:11:33.976.
+2118:Test Suite 'NormalizerTests' started at 2026-11-07 10:11:33.977.
+2119:Test Case '-[ElnurTests.NormalizerTests test0_AndroidRules]' started.
+2138:Test Case '-[ElnurTests.NormalizerTests test0_AndroidRules]' passed (0.015 seconds).
+2139:Test Case '-[ElnurTests.NormalizerTests test0e_CharacterSymbolsAz]' started.
+2141:Test Case '-[ElnurTests.NormalizerTests test0e_CharacterSymbolsAz]' passed (0.011 seconds).
+2142:Test Case '-[ElnurTests.NormalizerTests test0f_SchwaKey]' started.
+2143:Test Case '-[ElnurTests.NormalizerTests test0f_SchwaKey]' passed (0.002 seconds).
+2144:Test Case '-[ElnurTests.NormalizerTests test0g_TurkishPunctuationNamesAz]' started.
+2145:Test Case '-[ElnurTests.NormalizerTests test0g_TurkishPunctuationNamesAz]' passed (0.023 seconds).
+2146:Test Case '-[ElnurTests.NormalizerTests test0h_UnicodeLetterNamesAndPitch]' started.
+2147:Test Case '-[ElnurTests.NormalizerTests test0h_UnicodeLetterNamesAndPitch]' passed (0.003 seconds).
+2148:Test Case '-[ElnurTests.NormalizerTests test0i_AndroidStyleProfile]' started.
+2151:Test Case '-[ElnurTests.NormalizerTests test0i_AndroidStyleProfile]' passed (0.013 seconds).
+2152:Test Case '-[ElnurTests.NormalizerTests test0j_MixedSampleRateProfileIsClean]' started.
+2157:Test Case '-[ElnurTests.NormalizerTests test0j_MixedSampleRateProfileIsClean]' passed (1.267 seconds).
+2158:Test Case '-[ElnurTests.NormalizerTests test0k_CapitalSchwaInText]' started.
+2159:Test Case '-[ElnurTests.NormalizerTests test0k_CapitalSchwaInText]' passed (0.005 seconds).
+2160:Test Suite 'NormalizerTests' passed at 2026-11-07 10:11:35.322.
+2162:Test Suite 'TextCoverageTests' started at 2026-11-07 10:11:35.322.
+2163:Test Case '-[ElnurTests.TextCoverageTests test5_TextCoverage]' started.
+2171:Test Case '-[ElnurTests.TextCoverageTests test5_TextCoverage]' passed (42.352 seconds).
+2172:Test Suite 'TextCoverageTests' passed at 2026-11-07 10:12:17.676.
+2174:Test Suite 'ElnurTests.xctest' passed at 2026-11-07 10:12:17.676.
+2176:Test Suite 'All tests' passed at 2026-11-07 10:12:17.677.

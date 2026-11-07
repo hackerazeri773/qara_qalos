@@ -1,0 +1,27 @@
+dd/Build/Products/Debug-iphonesimulator/ElnurTTS.app/Frameworks:
+ElnurKit.framework
+libXCTestBundleInject.dylib
+libXCTestSwiftSupport.dylib
+Testing.framework
+XCTAutomationSupport.framework
+XCTest.framework
+XCTestCore.framework
+XCTestSupport.framework
+XCUIAutomation.framework
+XCUnit.framework
+
+dd/Build/Products/Debug-iphonesimulator/ElnurTTS.app/PlugIns:
+ElnurExtension.appex
+ElnurTests.xctest
+az.elnurtts.app: 8009
+     az.elnurtts.app.synthesizer(6.15.5)
+	            Path = /Users/runner/Library/Developer/CoreSimulator/Devices/A1285399-F2F4-46E9-8CF2-4AA227FF7EF3/data/Containers/Bundle/Application/CFEC1E12-6F46-450B-A97B-CE35450FE1A6/ElnurTTS.app/PlugIns/ElnurExtension.appex
+	            UUID = DFCFBF5E-F292-4E20-AB47-9553E5A93088
+	       Timestamp = 2026-11-07 10:08:50 +0000
+	             SDK = com.apple.AudioUnit
+	   Parent Bundle = /Users/runner/Library/Developer/CoreSimulator/Devices/A1285399-F2F4-46E9-8CF2-4AA227FF7EF3/data/Containers/Bundle/Application/CFEC1E12-6F46-450B-A97B-CE35450FE1A6/ElnurTTS.app
+	    Display Name = ElnurTTS Synthesizer
+	      Short Name = ElnurTTS Synthesizer
+	     Parent Name = ElnurTTS
+
+ (1 plug-in)

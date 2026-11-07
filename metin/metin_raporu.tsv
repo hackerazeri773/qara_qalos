@@ -1,0 +1,267 @@
+dil	no	durum	sure_sn	sesli_sn	ad	metin	fonem
+az	000	ok	0.46	0.12	harf a	a	[K]a
+az	001	ok	0.54	0.18	harf b	b	[K]b
+az	002	ok	0.59	0.24	harf c	c	[K]c
+az	003	ok	0.62	0.26	harf ç	ç	[K]ç
+az	004	ok	0.54	0.20	harf d	d	[K]d
+az	005	ok	0.41	0.12	harf e	e	[K]e
+az	006	ok	0.41	0.13	harf ə	ə	[K]ə
+az	007	ok	0.59	0.23	harf f	f	[K]f
+az	008	ok	0.58	0.24	harf g	g	[K]g
+az	009	ok	0.58	0.30	harf ğ	ğ	[K]ğ
+az	010	ok	0.58	0.25	harf h	h	[K]h
+az	011	ok	0.71	0.30	harf x	x	[K]x
+az	012	ok	0.46	0.12	harf ı	ı	[K]ı
+az	013	ok	0.42	0.12	harf i	i	[K]i
+az	014	ok	0.49	0.20	harf j	j	[K]j
+az	015	ok	0.59	0.21	harf k	k	[K]k
+az	016	ok	0.56	0.19	harf q	q	[K]q
+az	017	ok	0.52	0.24	harf l	l	[K]l
+az	018	ok	0.55	0.26	harf m	m	[K]m
+az	019	ok	0.54	0.25	harf n	n	[K]n
+az	020	ok	0.46	0.12	harf o	o	[K]o
+az	021	ok	0.41	0.13	harf ö	ö	[K]ö
+az	022	ok	0.56	0.18	harf p	p	[K]p
+az	023	ok	0.54	0.25	harf r	r	[K]r
+az	024	ok	0.62	0.29	harf s	s	[K]s
+az	025	ok	0.60	0.29	harf ş	ş	[K]ş
+az	026	ok	0.58	0.19	harf t	t	[K]t
+az	027	ok	0.39	0.12	harf u	u	[K]u
+az	028	SESSIZ	0.33	0.05	harf ü	ü	[K]ü
+az	029	ok	0.53	0.22	harf v	v	[K]v
+az	030	ok	0.58	0.29	harf y	y	[K]y
+az	031	ok	0.58	0.30	harf z	z	[K]z
+az	032	ok	0.78	0.38	harf w	w	[K]w
+az	033	ok	1.10	0.34	büyük harf Ə	Böyük Ə	Böyük / [K]Ə
+az	034	ok	1.31	0.49	büyük harf Ç	Böyük Ç	Böyük / [K]Ç
+az	035	ok	1.27	0.52	büyük harf Ğ	Böyük Ğ	Böyük / [K]Ğ
+az	036	ok	1.15	0.34	büyük harf I	Böyük I	Böyük / [K]I
+az	037	ok	1.10	0.34	büyük harf Ö	Böyük Ö	Böyük / [K]Ö
+az	038	ok	1.29	0.50	büyük harf Ş	Böyük Ş	Böyük / [K]Ş
+az	039	ok	1.02	0.27	büyük harf Ü	Böyük Ü	Böyük / [K]Ü
+az	040	ok	1.11	0.34	büyük harf İ	Böyük İ	Böyük / [K]İ
+az	041	ok	1.15	0.34	büyük I (noktasız)	Böyük I	Böyük / [K]I
+az	042	ok	0.93	0.36	karakter ,	,	[K],
+az	043	ok	0.75	0.28	karakter .	.	[K].
+az	044	ok	1.31	0.92	karakter ?	?	[K]?
+az	045	ok	1.28	0.86	karakter !	!	[K]!
+az	046	ok	1.12	0.58	karakter :	:	[K]:
+az	047	ok	1.25	0.69	karakter ;	;	[K];
+az	048	ok	0.63	0.23	karakter -	-	[K]-
+az	049	ok	1.24	0.77	karakter (	(	[K](
+az	050	ok	1.36	0.93	karakter )	)	[K])
+az	051	ok	0.78	0.34	karakter "	"	[K]"
+az	052	ok	1.58	1.03	karakter '	'	[K]'
+az	053	ok	0.53	0.19	karakter @	@	et
+az	054	ok	0.83	0.43	karakter #	#	[K]#
+az	055	ok	0.70	0.29	karakter %	%	[K]%
+az	056	ok	1.15	0.75	karakter &	&	və işarəsi
+az	057	ok	0.75	0.37	karakter *	*	[K]*
+az	058	ok	1.00	0.37	karakter +	+	[K]+
+az	059	ok	1.15	0.66	karakter =	=	bərabərdir
+az	060	ok	1.45	0.92	karakter /	/	[K]/
+az	061	ok	1.51	1.06	karakter \	\	[K]\
+az	062	ok	1.04	0.38	karakter <	<	kiçikdir
+az	063	ok	0.90	0.28	karakter >	>	böyükdür
+az	064	ok	1.59	1.18	karakter _	_	[K]_
+az	065	ok	1.16	0.56	karakter |	|	şaquli xətt
+az	066	ok	0.69	0.28	karakter ~	~	tilda
+az	067	ok	0.84	0.35	karakter ^	^	şapka
+az	068	ok	1.62	1.11	karakter [	[	[K][
+az	069	ok	1.51	1.09	karakter ]	]	[K]]
+az	070	ok	1.57	1.24	karakter {	{	[K]{
+az	071	ok	1.63	1.32	karakter }	}	[K]}
+az	072	ok	0.83	0.39	karakter $	$	dollar
+az	073	ok	2.52	1.88	karakter €	€	[K]€
+az	074	ok	2.34	1.85	karakter ₼	₼	[K]₼
+az	075	ok	2.76	2.12	karakter ₺	₺	[K]₺
+az	076	ok	1.74	1.31	karakter £	£	[K]£
+az	077	ok	1.79	1.33	karakter °	°	[K]°
+az	078	ok	1.87	1.36	karakter §	§	[K]§
+az	079	ok	1.22	0.67	karakter ©	©	[K]©
+az	080	ok	1.46	0.95	karakter ®	®	[K]®
+az	081	ok	2.22	1.71	karakter …	…	[K]…
+az	082	ok	2.19	1.68	karakter —	—	[K]—
+az	083	ok	2.03	1.19	karakter «	«	[K]«
+az	084	ok	1.86	1.37	karakter »	»	[K]»
+az	085	ok	1.25	0.84	karakter №	№	[K]№
+az	086	ok	2.47	1.94	karakter •	•	[K]•
+az	087	ok	0.78	0.27	rakam 0	0	[K]0
+az	088	ok	0.62	0.19	rakam 1	1	[K]1
+az	089	ok	0.62	0.24	rakam 2	2	[K]2
+az	090	ok	0.74	0.26	rakam 3	3	[K]3
+az	091	ok	0.64	0.23	rakam 4	4	[K]4
+az	092	ok	0.64	0.30	rakam 5	5	[K]5
+az	093	ok	0.70	0.29	rakam 6	6	[K]6
+az	094	ok	0.76	0.33	rakam 7	7	[K]7
+az	095	ok	0.93	0.48	rakam 8	8	[K]8
+az	096	ok	0.87	0.36	rakam 9	9	[K]9
+az	097	ok	0.99	0.60	emoji tek 😀	😀	[K]😀
+az	098	ok	2.11	1.70	emoji tek 😂	😂	[K]😂
+az	099	ok	1.11	0.58	emoji tek ❤️	❤️	qırmızı ürək
+az	100	ok	1.47	0.92	emoji tek 👍	👍	[K]👍
+az	101	ok	2.75	1.92	emoji tek 👋🏽	👋🏽	[K]👋🏽
+az	102	ok	1.42	0.87	emoji tek 🙏	🙏	[K]🙏
+az	103	ok	0.68	0.29	emoji tek 🔥	🔥	[K]🔥
+az	104	ok	2.13	1.40	emoji tek 🎉	🎉	[K]🎉
+az	105	ok	2.04	1.14	emoji tek 🇦🇿	🇦🇿	[K]🇦🇿
+az	106	ok	1.92	0.84	emoji tek 🇹🇷	🇹🇷	[K]🇹🇷
+az	107	ok	5.52	3.96	metin Salam 👋 necəsən? 😊	Salam 👋 necəsən? 😊	Salam 👋 necəsən? 😊
+az	108	ok	2.41	1.43	metin Əlinizə sağlıq! ❤️	Əlinizə sağlıq! ❤️	Əlinizə sağlıq! ❤️
+az	109	ok	2.57	1.57	metin Şəhərə gəldik, çox gözəl idi.	Şəhərə gəldik, çox gözəl idi.	Şəhərə gəldik, çox gözəl idi.
+az	110	ok	3.50	1.95	metin Ölkəmiz, üzüm, ğ hərfi, ıslaq	Ölkəmiz, üzüm, ğ hərfi, ıslaq	Ölkəmiz, üzüm, ğ hərfi, ıslaq
+az	111	ok	1.39	0.96	metin İstanbul və Bakı	İstanbul və Bakı	İstanbul və Bakı
+az	112	ok	3.50	1.43	metin WhatsApp, YouTube, Google, iPhone	WhatsApp, YouTube, Google, iPhone	WhatsApp, YouTube, Google, iPhone
+az	113	ok	2.34	1.23	metin e-poçt: test@mail.az	e-poçt: test@mail.az	e-poçt: test et mail.az
+az	114	ok	2.95	2.14	metin https://www.google.com	https://www.google.com	https://www.google.com
+az	115	ok	1.27	0.74	metin Привет, как дела?	Привет, как дела?	Привет, как дела?
+az	116	ok	1.92	1.15	metin Hello, how are you?	Hello, how are you?	Hello, how are you?
+az	117	ok	3.73	2.01	metin BMT, AZN, USB, VoiceOver	BMT, AZN, USB, VoiceOver	BMT, AZN, USB, VoiceOver
+az	118	ok	2.51	1.37	metin 1-ci, 2-ci, 3-cü sinif	1-ci, 2-ci, 3-cü sinif	1-ci, 2-ci, 3-cü sinif
+az	119	ok	5.59	4.17	metin 25 AZN, 25 ₼, $100, €50	25 AZN, 25 ₼, $100, €50	25 AZN, 25 Azərbaycan Manatı, dollar 100, avro 50
+az	120	ok	4.68	3.15	metin Faiz: 50%, temperatur −5 °C	Faiz: 50%, temperatur −5 °C	Faiz: 50%, temperatur çıxma işarəsi 5 dərəcə C
+az	121	ok	4.67	3.16	metin Tarix: 05.11.2026, saat 14:30	Tarix: 05.11.2026, saat 14:30	Tarix: 05.11.2026, saat 14:30
+az	122	ok	5.35	3.70	metin Telefon: +994 50 123 45 67	Telefon: +994 50 123 45 67	Telefon: plus 994 50 123 45 67
+az	123	ok	4.96	3.30	metin 2026-cı il, 5-ci mərtəbə, 20-si, 100-dən çox	2026-cı il, 5-ci mərtəbə, 20-si, 100-dən çox	2026-cı il, 5-ci mərtəbə, 20-si, 100-dən çox
+az	124	ok	4.78	3.21	metin 1 200 000 manat, 3,5 kq, 12 km	1 200 000 manat, 3,5 kq, 12 km	1 200 000 manat, 3,5 kq, 12 km
+az	125	ok	11.11	7.45	metin Bu gün 😂😂 çox güldük 👍🏽 sağ ol 🙏	Bu gün 😂😂 çox güldük 👍🏽 sağ ol 🙏	Bu gün 😂😂 çox güldük 👍🏽 sağ ol 🙏
+az	126	ok	11.52	8.25	metin Qiymət 2+2=4, a<b, x×y, 10÷2, ±3, ∞, →	Qiymət 2+2=4, a<b, x×y, 10÷2, ±3, ∞, →	Qiymət 2 plus 2 bərabərdir 4, a kiçikdir b, x vurma işarəsi y, 10 bölmə işarəsi 2, toplama-çıxma 3, sonsuzluq işarəsi, sağa yönəlmiş ox
+az	127	ok	5.55	4.14	metin © 2026 ElnurTTS™, Bakı ®	© 2026 ElnurTTS™, Bakı ®	müəllif hüququ 2026 ElnurTTS ticarət nişanı, Bakı qeydiyyata alınmış
+az	128	ok	4.95	3.14	metin №5, § 3, • maddə, 1‰	№5, § 3, • maddə, 1‰	nömrə 5, paraqraf 3, nöqtə işarəsi maddə, 1 promil
+az	129	ok	1.59	1.18	telephone 2026	Yıl 2026	Yıl 2026
+az	130	ok	2.51	1.90	ondalık bölünmüş 0,365	Değer 0,365.	Değer 0,365.
+az	131	ok	3.02	2.24	telefon numarası	050 123 45 67	050 123 45 67
+az	132	ok	2.30	1.75	say-as date	05.11.2026	05.11.2026
+az	133	ok	0.82	0.38	break	Bir iki	Bir iki
+tr	000	ok	0.42	0.12	harf a	a	[K]a
+tr	001	ok	0.42	0.10	harf b	b	[K]b
+tr	002	ok	0.44	0.09	harf c	c	[K]c
+tr	003	ok	0.42	0.08	harf ç	ç	[K]ç
+tr	004	ok	0.51	0.08	harf d	d	[K]d
+tr	005	ok	0.46	0.14	harf e	e	[K]e
+tr	006	ok	0.47	0.12	harf f	f	[K]f
+tr	007	ok	0.59	0.12	harf g	g	[K]g
+tr	008	ok	1.00	0.56	harf ğ	ğ	[K]ğ
+tr	009	ok	0.49	0.13	harf h	h	[K]h
+tr	010	SESSIZ	0.38	0.03	harf ı	ı	[K]ı
+tr	011	SESSIZ	0.38	0.04	harf i	i	[K]i
+tr	012	ok	0.52	0.18	harf j	j	[K]j
+tr	013	SESSIZ	0.40	0.06	harf k	k	[K]k
+tr	014	ok	0.50	0.13	harf l	l	[K]l
+tr	015	ok	0.43	0.10	harf m	m	[K]m
+tr	016	ok	0.51	0.18	harf n	n	[K]n
+tr	017	ok	0.44	0.12	harf o	o	[K]o
+tr	018	ok	0.48	0.17	harf ö	ö	[K]ö
+tr	019	ok	0.44	0.11	harf p	p	[K]p
+tr	020	ok	0.48	0.13	harf r	r	[K]r
+tr	021	ok	0.49	0.18	harf s	s	[K]s
+tr	022	ok	0.48	0.18	harf ş	ş	[K]ş
+tr	023	SESSIZ	0.39	0.07	harf t	t	[K]t
+tr	024	ok	0.48	0.12	harf u	u	[K]u
+tr	025	ok	0.48	0.13	harf ü	ü	[K]ü
+tr	026	ok	0.42	0.08	harf v	v	[K]v
+tr	027	ok	0.48	0.14	harf y	y	[K]y
+tr	028	ok	0.46	0.15	harf z	z	[K]z
+tr	029	ok	0.64	0.24	harf q	q	[K]q
+tr	030	ok	0.87	0.45	harf w	w	[K]w
+tr	031	ok	0.52	0.19	harf x	x	[K]x
+tr	032	ok	1.07	0.37	büyük harf Ç	Büyük Ç	Büyük / [K]Ç
+tr	033	ok	1.65	0.83	büyük harf Ğ	Büyük Ğ	Büyük / [K]Ğ
+tr	034	ok	1.03	0.30	büyük harf I	Büyük I	Büyük / [K]I
+tr	035	ok	1.13	0.44	büyük harf Ö	Büyük Ö	Büyük / [K]Ö
+tr	036	ok	1.13	0.42	büyük harf Ş	Büyük Ş	Büyük / [K]Ş
+tr	037	ok	1.13	0.40	büyük harf Ü	Büyük Ü	Büyük / [K]Ü
+tr	038	ok	1.03	0.32	büyük harf İ	Büyük İ	Büyük / [K]İ
+tr	039	ok	1.03	0.30	büyük I (noktasız)	Büyük I	Büyük / [K]I
+tr	040	ok	0.71	0.31	karakter ,	,	[K],
+tr	041	ok	0.70	0.23	karakter .	.	[K].
+tr	042	ok	1.11	0.71	karakter ?	?	[K]?
+tr	043	ok	0.64	0.33	karakter !	!	[K]!
+tr	044	ok	0.90	0.37	karakter :	:	[K]:
+tr	045	ok	1.10	0.54	karakter ;	;	[K];
+tr	046	ok	0.55	0.21	karakter -	-	[K]-
+tr	047	ok	1.04	0.58	karakter (	(	[K](
+tr	048	ok	1.13	0.61	karakter )	)	[K])
+tr	049	ok	0.62	0.23	karakter "	"	[K]"
+tr	050	ok	1.40	0.94	karakter '	'	[K]'
+tr	051	SESSIZ	0.44	0.06	karakter @	@	et
+tr	052	ok	0.74	0.35	karakter #	#	[K]#
+tr	053	ok	0.68	0.33	karakter %	%	[K]%
+tr	054	ok	0.95	0.49	karakter &	&	ve işareti
+tr	055	ok	0.76	0.38	karakter *	*	[K]*
+tr	056	ok	0.59	0.16	karakter +	+	[K]+
+tr	057	ok	0.82	0.29	karakter =	=	eşittir
+tr	058	ok	1.19	0.67	karakter /	/	[K]/
+tr	059	ok	1.40	0.95	karakter \	\	[K]\
+tr	060	ok	0.90	0.34	karakter <	<	küçüktür
+tr	061	ok	0.88	0.38	karakter >	>	büyüktür
+tr	062	ok	1.46	1.10	karakter _	_	[K]_
+tr	063	ok	1.05	0.53	karakter |	|	dikey çizgi
+tr	064	ok	0.55	0.13	karakter ~	~	tilde
+tr	065	ok	0.72	0.27	karakter ^	^	şapka
+tr	066	ok	1.39	0.96	karakter [	[	[K][
+tr	067	ok	1.32	0.95	karakter ]	]	[K]]
+tr	068	ok	1.40	1.09	karakter {	{	[K]{
+tr	069	ok	1.49	1.19	karakter }	}	[K]}
+tr	070	ok	0.73	0.26	karakter $	$	dolar
+tr	071	ok	2.39	1.78	karakter €	€	[K]€
+tr	072	ok	2.01	1.55	karakter ₼	₼	[K]₼
+tr	073	ok	2.44	1.89	karakter ₺	₺	[K]₺
+tr	074	ok	1.51	1.13	karakter £	£	[K]£
+tr	075	ok	1.64	1.15	karakter °	°	[K]°
+tr	076	ok	1.58	1.14	karakter §	§	[K]§
+tr	077	ok	1.39	0.78	karakter ©	©	[K]©
+tr	078	ok	1.18	0.71	karakter ®	®	[K]®
+tr	079	ok	2.02	1.57	karakter …	…	[K]…
+tr	080	ok	2.03	1.57	karakter —	—	[K]—
+tr	081	ok	1.70	1.11	karakter «	«	[K]«
+tr	082	ok	1.84	1.08	karakter »	»	[K]»
+tr	083	ok	1.22	0.62	karakter №	№	[K]№
+tr	084	ok	2.24	1.74	karakter •	•	[K]•
+tr	085	ok	0.72	0.27	rakam 0	0	[K]0
+tr	086	ok	0.51	0.12	rakam 1	1	[K]1
+tr	087	ok	0.53	0.13	rakam 2	2	[K]2
+tr	088	ok	0.46	0.15	rakam 3	3	[K]3
+tr	089	ok	0.69	0.18	rakam 4	4	[K]4
+tr	090	ok	0.56	0.25	rakam 5	5	[K]5
+tr	091	ok	0.60	0.21	rakam 6	6	[K]6
+tr	092	ok	0.60	0.20	rakam 7	7	[K]7
+tr	093	ok	0.77	0.42	rakam 8	8	[K]8
+tr	094	ok	0.83	0.36	rakam 9	9	[K]9
+tr	095	ok	1.08	0.70	emoji tek 😀	😀	[K]😀
+tr	096	ok	1.51	1.02	emoji tek 😂	😂	[K]😂
+tr	097	ok	0.86	0.44	emoji tek ❤️	❤️	kırmızı kalp
+tr	098	ok	1.49	0.91	emoji tek 👍	👍	[K]👍
+tr	099	ok	1.75	1.23	emoji tek 👋🏽	👋🏽	[K]👋🏽
+tr	100	ok	1.26	0.82	emoji tek 🙏	🙏	[K]🙏
+tr	101	ok	0.67	0.31	emoji tek 🔥	🔥	[K]🔥
+tr	102	ok	1.34	0.73	emoji tek 🎉	🎉	[K]🎉
+tr	103	ok	1.56	1.11	emoji tek 🇦🇿	🇦🇿	[K]🇦🇿
+tr	104	ok	1.20	0.64	emoji tek 🇹🇷	🇹🇷	[K]🇹🇷
+tr	105	ok	3.65	2.49	metin Merhaba 👋 nasılsın? 😊	Merhaba 👋 nasılsın? 😊	Merhaba 👋 nasılsın? 😊
+tr	106	ok	2.16	1.36	metin Ellerinize sağlık! ❤️	Ellerinize sağlık! ❤️	Ellerinize sağlık! ❤️
+tr	107	ok	2.03	1.24	metin Şehre geldik, çok güzeldi.	Şehre geldik, çok güzeldi.	Şehre geldik, çok güzeldi.
+tr	108	ok	3.14	1.98	metin Ülkemiz, üzüm, ğ harfi, ıslak	Ülkemiz, üzüm, ğ harfi, ıslak	Ülkemiz, üzüm, ğ harfi, ıslak
+tr	109	ok	1.30	0.83	metin İstanbul ve Iğdır	İstanbul ve Iğdır	İstanbul ve Iğdır
+tr	110	ok	2.29	1.15	metin WhatsApp, YouTube, Google, iPhone	WhatsApp, YouTube, Google, iPhone	WhatsApp, YouTube, Google, iPhone
+tr	111	ok	2.37	1.32	metin e-posta: test@mail.com.tr	e-posta: test@mail.com.tr	e-posta: test et mail.com.tr
+tr	112	ok	2.72	2.08	metin https://www.google.com	https://www.google.com	https://www.google.com
+tr	113	ok	1.28	0.71	metin Привет, как дела?	Привет, как дела?	Привет, как дела?
+tr	114	ok	1.39	0.80	metin Hello, how are you?	Hello, how are you?	Hello, how are you?
+tr	115	ok	2.81	1.73	metin TBMM, TL, USB, VoiceOver	TBMM, TL, USB, VoiceOver	TBMM, TL, USB, VoiceOver
+tr	116	ok	2.27	0.81	metin 1., 2. ve 3. sınıf	1., 2. ve 3. sınıf	1. 2. ve 3. sınıf
+tr	117	ok	4.06	3.00	metin 25 TL, 25 ₺, $100, €50	25 TL, 25 ₺, $100, €50	25 TL, 25 Türk lirası, dolar 100, avro 50
+tr	118	ok	4.02	2.87	metin Yüzde: %50, sıcaklık −5 °C	Yüzde: %50, sıcaklık −5 °C	Yüzde: %50, sıcaklık eksi işareti 5 derece C
+tr	119	ok	4.24	2.98	metin Tarih: 05.11.2026, saat 14:30	Tarih: 05.11.2026, saat 14:30	Tarih: 05.11.2026, saat 14:30
+tr	120	ok	4.59	3.36	metin Telefon: +90 532 123 45 67	Telefon: +90 532 123 45 67	Telefon: artı 90 532 123 45 67
+tr	121	ok	4.13	2.59	metin 2026'da, 5. kat, 4'e 3, 100'den fazla	2026'da, 5. kat, 4'e 3, 100'den fazla	2026'da, 5. kat, 4'e 3, 100'den fazla
+tr	122	ok	3.78	2.58	metin 1 200 000 lira, 3,5 kg, 12 km	1 200 000 lira, 3,5 kg, 12 km	1 200 000 lira, 3,5 kg, 12 km
+tr	123	ok	8.29	5.94	metin Bugün 😂😂 çok güldük 👍🏽 sağ ol 🙏	Bugün 😂😂 çok güldük 👍🏽 sağ ol 🙏	Bugün 😂😂 çok güldük 👍🏽 sağ ol 🙏
+tr	124	ok	9.48	6.89	metin Fiyat 2+2=4, a<b, x×y, 10÷2, ±3, ∞, →	Fiyat 2+2=4, a<b, x×y, 10÷2, ±3, ∞, →	Fiyat 2 artı 2 eşittir 4, a küçüktür b, x çarpma işareti y, 10 bölme işareti 2, artı-eksi 3, sonsuzluk işareti, sağı gösteren ok
+tr	125	ok	6.28	4.83	metin © 2026 ElnurTTS™, İstanbul ®	© 2026 ElnurTTS™, İstanbul ®	telif hakkı işareti 2026 ElnurTTS ticari marka işareti, İstanbul tescil işareti
+tr	126	ok	3.97	2.79	metin №5, § 3, • madde, 1‰	№5, § 3, • madde, 1‰	numara 5, paragraf 3, madde işareti madde, 1 binde
+tr	127	ok	1.49	1.03	telephone 2026	Yıl 2026	Yıl 2026
+tr	128	ok	2.02	1.48	ondalık bölünmüş 0,365	Değer 0,365.	Değer 0,365.
+tr	129	ok	2.66	1.96	telefon numarası	050 123 45 67	050 123 45 67
+tr	130	ok	2.17	1.64	say-as date	05.11.2026	05.11.2026
+tr	131	ok	0.80	0.39	break	Bir iki	Bir iki
