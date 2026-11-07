@@ -21,6 +21,7 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)!
         outputBus = try AUAudioUnitBus(format: format)
         try super.init(componentDescription: componentDescription, options: options)
+        stream.configure(sampleRate: format.sampleRate)
         _outputBusses = AUAudioUnitBusArray(audioUnit: self, busType: .output, busses: [outputBus])
     }
 
@@ -129,14 +130,31 @@ final class SampleStream {
     private var readIndex = 0
     private var finished = true
     private var generation = 0
+    /// Bu istekte motordan gercek ses geldi mi? Gelmeden once ses cikisi BEKLETILMEZ.
+    private var gotAudio = false
+    /// Her istegin basina konan sessizlik ve ilk sesin yumusak girisi (ornek sayisi).
+    private var leadSamples = 0
+    private var fadeSamples = 0
+
+    /// iOS 27: uzun bir bekleyisten sonra ilk okumada (eklenti yeniden baslarken) cikis
+    /// bekletilince ses patliyor ve basi kesiliyordu. Ses yolu acilirken kaybolan kisim
+    /// bu sessizlik olur; yumusak giris de baslangictaki "tik"i onler.
+    func configure(sampleRate: Double) {
+        condition.lock()
+        defer { condition.unlock() }
+        leadSamples = Int(sampleRate * 0.1)
+        fadeSamples = Int(sampleRate * 0.005)
+    }
 
     func begin() -> Int {
         condition.lock()
         defer { condition.unlock() }
         generation += 1
         samples.removeAll(keepingCapacity: true)
+        samples.append(contentsOf: repeatElement(Float(0), count: leadSamples))
         readIndex = 0
         finished = false
+        gotAudio = false
         condition.broadcast()
         return generation
     }
@@ -161,7 +179,15 @@ final class SampleStream {
         condition.lock()
         defer { condition.unlock() }
         guard token == generation else { return }
-        samples.append(contentsOf: newSamples)
+        if !gotAudio && !newSamples.isEmpty {
+            gotAudio = true
+            var faded = newSamples
+            let n = min(fadeSamples, faded.count)
+            for i in 0..<n { faded[i] *= Float(i) / Float(max(1, n)) }
+            samples.append(contentsOf: faded)
+        } else {
+            samples.append(contentsOf: newSamples)
+        }
         condition.broadcast()
     }
 
@@ -180,9 +206,13 @@ final class SampleStream {
 
         // Istenen blogun tamami hazir olana kadar bekle. Yarim blogu sessizlikle
         // doldurmak konusmanin icine kisa bosluklar sokar ("takilarak konusma").
-        let deadline = Date().addingTimeInterval(2.0)
-        while samples.count - readIndex < count && !finished {
-            if !condition.wait(until: deadline) { break }
+        // Ama motordan henuz hic ses gelmediyse (soguk baslangic) bekleme: hemen sessizlik ver.
+        // iOS 27 bekletilen ses cikisini kesiyor (patlama + kesik baslangic).
+        if gotAudio {
+            let deadline = Date().addingTimeInterval(1.0)
+            while samples.count - readIndex < count && !finished {
+                if !condition.wait(until: deadline) { break }
+            }
         }
 
         let available = samples.count - readIndex
