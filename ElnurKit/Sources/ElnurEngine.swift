@@ -84,6 +84,13 @@ public final class ElnurEngine {
     }
 
 
+    /// Eklenti acilinca cagrilir: 24 kHz motoru ve dil verilerini onceden yukler.
+    public func warmUp() throws {
+        lock.lock()
+        defer { lock.unlock() }
+        _ = try engine(quality: "std")
+    }
+
     private func engine(quality: String) throws -> ElnurTTS_tts_engine {
         if let existing = engines[quality] { return existing }
         let configPath = try configDirectory(quality: quality)

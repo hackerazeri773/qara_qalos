@@ -23,6 +23,9 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         try super.init(componentDescription: componentDescription, options: options)
         stream.configure(sampleRate: format.sampleRate)
         _outputBusses = AUAudioUnitBusArray(audioUnit: self, busType: .output, busses: [outputBus])
+        // Motoru hemen arka planda isit (Ukraynaca RHVoice gibi): eklenti yeniden baslatildiginda
+        // ilk okumanin gecikmesi kisalir.
+        workQueue.async { _ = try? ElnurEngine.shared().warmUp() }
     }
 
     // MARK: - Sesler
@@ -115,9 +118,8 @@ public final class ElnurAudioUnit: AVSpeechSynthesisProviderAudioUnit {
                     }
                 }
             }
-            if done {
-                actionFlags.pointee = .offlineUnitRenderAction_Complete
-            }
+            // Her blokta durumu acikca bildir (iOS 27 daha kati): surüyor / bitti.
+            actionFlags.pointee = done ? .offlineUnitRenderAction_Complete : .offlineUnitRenderAction_Render
             return noErr
         }
     }
@@ -151,7 +153,9 @@ final class SampleStream {
         defer { condition.unlock() }
         generation += 1
         samples.removeAll(keepingCapacity: true)
-        samples.append(contentsOf: repeatElement(Float(0), count: leadSamples))
+        // Tam sessizlik yerine duyulmayacak kadar kisik (-60 dB) dolgu: iOS bastaki tam sessizligi
+        // kirpiyor gibi; kirpilinca hoparlor uyanirken konusmanin basi ("s") kayboluyordu.
+        for _ in 0..<leadSamples { samples.append(Float.random(in: -0.001...0.001)) }
         readIndex = 0
         finished = false
         gotAudio = false
