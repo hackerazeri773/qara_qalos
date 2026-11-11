@@ -1,0 +1,6 @@
+Calistirma: https://github.com/hackerazeri773/qara_qalos/actions/runs/43063027496
+Commit: 966c7221daba52df8b927cd361c69906da17d31e
+Tarih: Wed Nov 11 17:09:22 UTC 2026
+Xcode: Xcode 26.3 Build version 17C529 
+Simulator: A1285399-F2F4-46E9-8CF2-4AA227FF7EF3
+Is durumu: success
