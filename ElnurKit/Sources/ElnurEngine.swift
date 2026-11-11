@@ -168,7 +168,11 @@ public final class ElnurEngine {
         let voice = try self.voice(id: voiceID)
         // Motorun okumadigi semboller (₼ $ € × → & @ = < > ...) Android ile ayni adlarla yazilir.
         let normalize = !characters && (voice.language.hasPrefix("az") || voice.language.hasPrefix("tr"))
-        let prepared = normalize ? TextNormalizer.normalize(text, language: voice.language, options: .elnurTTS) : text
+        // Uygulama ici dinleme de VoiceOver ile ayni kurallardan gecsin (binlik ayirici vb.).
+        let prepared = normalize
+            ? TextNormalizer.normalize(SpeechPlanner.joinThousands(text, language: voice.language),
+                                       language: voice.language, options: .elnurTTS)
+            : text
         let trimmed = prepared.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty { return [] }
 
