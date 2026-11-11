@@ -102,6 +102,39 @@ public enum SpeechPlanner {
         return t
     }
 
+    // Azerbaycanca/Turkcede binlik ayirici nokta (12.000 = on iki min); motor bunu ondalik sanip
+    // "on iki noqte sifir sifir sifir" okuyordu. Uclu gruplar birlestirilir: "12.000", "1.250.000",
+    // "12 000" ve VoiceOver'in "Noktalama: Tumu" bicimi "12 nokta 000" -> "12000".
+    // Tarih (05.11.2026), saat ve tek gruplu sayilar (1.5) degismez.
+    private static let thousandsPatterns: [NSRegularExpression] = [
+        #"(?<![\d.,])\d{1,3}(?:\.\d{3})+(?![\d]|\.\d)"#,
+        #"(?<![\d.,])[1-9]\d{0,2}(?:[ \u00A0\u202F]\d{3})+(?![\d]|\.\d)"#,
+        #"(?<![\d])\d{1,3}(?:\s+nokta\s+\d{3})+(?![\d]|\s+nokta\s+\d)"#,
+    ].map { try! NSRegularExpression(pattern: $0, options: [.caseInsensitive]) }
+    private static let thousandsSeparator = try! NSRegularExpression(
+        pattern: #"\s+nokta\s+|[. \u00A0\u202F]"#, options: [.caseInsensitive])
+
+    static func joinThousands(_ text: String, language: String) -> String {
+        guard language.hasPrefix("az") || language.hasPrefix("tr"),
+              text.contains(where: \.isNumber) else { return text }
+        var t = text
+        for re in thousandsPatterns {
+            let ns = t as NSString
+            var out = ""
+            var last = 0
+            for m in re.matches(in: t, range: NSRange(location: 0, length: ns.length)) {
+                out += ns.substring(with: NSRange(location: last, length: m.range.location - last))
+                let group = ns.substring(with: m.range)
+                out += thousandsSeparator.stringByReplacingMatches(
+                    in: group, range: NSRange(location: 0, length: (group as NSString).length), withTemplate: "")
+                last = m.range.location + m.range.length
+            }
+            out += ns.substring(from: last)
+            t = out
+        }
+        return t
+    }
+
     static func unicodeLetterName(_ text: String) -> String? {
         var key = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard key.contains(" letter ") else { return nil }
@@ -156,8 +189,9 @@ public enum SpeechPlanner {
             if !segment.isCharacters {
                 // Azerbaycanca seste VoiceOver'in Turkce noktalama/sembol adlari Azerbaycanca okunur;
                 // kelime icindeki buyuk "Ə" yerine yazdigi "schwa" yeniden harfe cevrilir.
-                let t = VoiceOverPunctuation.localize(restoreCapitalSchwa(segment.text, language: language),
-                                                      language: language)
+                let t = VoiceOverPunctuation.localize(
+                    joinThousands(restoreCapitalSchwa(segment.text, language: language), language: language),
+                    language: language)
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 if !t.isEmpty { add(t, characterMode: false) }
                 continue

@@ -139,4 +139,18 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(plan("schwalavə"), "Əlavə")
         XCTAssertEqual(SpeechPlanner.restoreCapitalSchwa(" schwa lavə", language: "tr-TR"), " schwa lavə")
     }
+
+    func test0l_ThousandsSeparators() {
+        let az = "az-AZ"
+        XCTAssertEqual(SpeechPlanner.joinThousands("12.000", language: az), "12000")
+        XCTAssertEqual(SpeechPlanner.joinThousands("Qiymət 1.250.000 manat.", language: az), "Qiymət 1250000 manat.")
+        XCTAssertEqual(SpeechPlanner.joinThousands("12 000 nəfər", language: az), "12000 nəfər")
+        XCTAssertEqual(SpeechPlanner.joinThousands("12 nokta 000", language: az), "12000")
+        XCTAssertEqual(SpeechPlanner.joinThousands("12.000,50 manat", language: az), "12000,50 manat")
+        XCTAssertEqual(SpeechPlanner.joinThousands("05.11.2026", language: az), "05.11.2026")
+        XCTAssertEqual(SpeechPlanner.joinThousands("Sürüm 1 nokta 0", language: az), "Sürüm 1 nokta 0")
+        XCTAssertEqual(SpeechPlanner.joinThousands("192.168.1.1", language: az), "192.168.1.1")
+        XCTAssertEqual(SpeechPlanner.joinThousands("Tel 050 123 45 67", language: az), "Tel 050 123 45 67")
+        XCTAssertEqual(SpeechPlanner.joinThousands("12.000", language: "ru-RU"), "12.000")
+    }
 }
